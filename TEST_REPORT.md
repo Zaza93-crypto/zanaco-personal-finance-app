@@ -34,3 +34,13 @@ The embedded source currently has 405 extracted rows while the statement summary
 - Excel import reads the first worksheet and searches for a header row containing date, description/details, and amount/debit/credit columns.
 - PDF support is heuristic for selectable-text PDFs only. Scanned/image-only PDFs require OCR and are not supported by this parser. Export CSV/Excel from Zanaco when a PDF is rejected.
 - Syntax validation of embedded JavaScript passed with Node.js. This is not a substitute for end-to-end browser testing against representative Zanaco XLSX/PDF statements; imported transactions remain unreconciled until verified.
+
+
+## Monthly budget page addition (12 Oct 2026)
+- Added a Monthly budget section and a header shortcut.
+- Added month selector and separate ZMW/USD budget ledgers.
+- Added per-category monthly limits, custom categories, spent-to-date, progress bars, and remaining/over-budget figures.
+- Budget spending counts recorded debit transactions only; credits and transfers are excluded.
+- Budget data and custom categories are included in JSON backup/restore.
+- Extended Cloudflare sync endpoint to read/write budget rows in a new D1 `budgets` table; apply migration `0002_budgets.sql` before cloud sync.
+- All inline JavaScript passes `node --check`. Browser-based interactive testing of the new budget controls was attempted but blocked by the execution environment, so save/reload and cross-device sync still require verification after deployment.
