@@ -35,3 +35,11 @@ VERIFIED TESTS (12 OCT 2026)
 - Test data was synthetic and was not merged into the user's actual statement records.
 - Not yet verified: live Cloudflare/D1 deployment and cross-device sync; Android installation on a physical phone; import of real Zanaco CSV variants; PDF parsing; complete reconciliation of the existing statement.
 - Existing embedded statement extraction has 405 rows against 423 statement-reported entries (18-row gap). Keep this warning until reconciled; do not treat it as a complete audit.
+
+
+STATEMENT UPLOAD FORMATS
+- CSV/TXT: supported directly.
+- Excel XLSX/XLS: first worksheet is read; the header row must include date, description/details, and amount or debit/credit columns.
+- PDF: selectable-text PDFs are parsed heuristically. Scanned/image-only PDFs and unsupported layouts are rejected rather than guessed; export CSV/Excel from Zanaco in those cases.
+- Excel and PDF readers load from public CDNs, so those formats require internet access at import time. CSV import does not require those parser libraries.
+- All imported rows remain unreconciled. Verify statement totals and balances before relying on dashboard figures.

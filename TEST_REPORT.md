@@ -26,3 +26,11 @@ Date: 12 October 2026
 
 ## Important financial data warning
 The embedded source currently has 405 extracted rows while the statement summary reports 423 transactions, a gap of 18. This discrepancy remains visible; no missing transactions were invented. Synthetic test rows were used only in the test browser context and were not written into the downloadable app's embedded data.
+
+## Additional statement formats (2026-10-12)
+- Expanded the upload input to accept CSV/TXT, Excel XLSX/XLS, and PDF files.
+- Added browser-side Excel parsing using SheetJS and text extraction using PDF.js.
+- Added a 15 MB upload limit and explicit rejection messages when a PDF layout/header cannot be identified.
+- Excel import reads the first worksheet and searches for a header row containing date, description/details, and amount/debit/credit columns.
+- PDF support is heuristic for selectable-text PDFs only. Scanned/image-only PDFs require OCR and are not supported by this parser. Export CSV/Excel from Zanaco when a PDF is rejected.
+- Syntax validation of embedded JavaScript passed with Node.js. This is not a substitute for end-to-end browser testing against representative Zanaco XLSX/PDF statements; imported transactions remain unreconciled until verified.
