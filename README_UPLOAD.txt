@@ -1,12 +1,13 @@
-ALL MONEY DASHBOARD — MULTI-PAGE GITHUB PAGES PACKAGE
+ALL MONEY MULTI-PAGE GITHUB PAGES PACKAGE
 
-Upload ALL THREE HTML files to the ROOT of your existing GitHub Pages repository, replacing index.html and adding tracker.html and budget.html:
-- index.html — Overview
-- tracker.html — Financial Tracker and statement imports
-- budget.html — Custom Budget Planner
+Upload these files into the ROOT of your existing GitHub Pages repository:
+- index.html (overview)
+- tracker.html (financial tracker)
+- budget.html (budget planner)
+- investment.html (equities and ETF tracker)
 
-Keep the files together in the same repository folder. All pages use the same browser localStorage on the same site origin, so imported transactions and budgets can be shared between these pages in the same browser. This does not provide cross-device/cloud sync.
+Replace existing index.html, tracker.html, and budget.html when prompted; add investment.html. Keep any other files used by your current project unless you know they are no longer needed.
 
-Before replacing files, download a backup of your current repository. CSV is the most reliable statement import format. Excel depends on the external XLSX library loading. PDF/scanned OCR is not implemented.
+Investment tracker features: add/edit/delete equities, ETFs and other assets; enter/update units, average cost and latest price; choose ZMW or USD per holding; view portfolio totals in ZMW or USD using an editable USD-to-ZMW exchange rate; see unrealised gain/loss and allocation; export CSV and JSON backup; import JSON backup.
 
-After committing, visit your GitHub Pages URL and use the Overview / Financial Tracker / Budget Planner navigation. Test with a small sample CSV and confirm totals before relying on it. Existing statement data includes a known 18-row extraction gap.
+IMPORTANT: data is saved in localStorage in the current browser on the current device. It is not automatically synchronised across devices. Prices and FX rate are manual inputs, not live market data. Back up before clearing browser data or replacing files. Test with sample records before relying on it.
