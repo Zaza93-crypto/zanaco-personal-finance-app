@@ -1,10 +1,12 @@
-ALL MONEY DASHBOARD - GITHUB PAGES UPDATE
+ALL MONEY DASHBOARD — MULTI-PAGE GITHUB PAGES PACKAGE
 
-Upload index.html to the ROOT of your existing GitHub Pages repository and choose to replace the existing index.html.
+Upload ALL THREE HTML files to the ROOT of your existing GitHub Pages repository, replacing index.html and adding tracker.html and budget.html:
+- index.html — Overview
+- tracker.html — Financial Tracker and statement imports
+- budget.html — Custom Budget Planner
 
-IMPORTANT:
-- Do not delete other repository files or folders. This package contains only the homepage/dashboard file.
-- Before replacing, download a copy of the current repository or at least its current index.html.
-- This version saves newly imported transactions and budgets in the current browser's local storage. It does NOT implement cross-device Cloudflare/database synchronisation. Do not assume phone data will appear on another device.
-- CSV is the most reliable statement import format. Excel import depends on the XLSX library loading from the internet. PDF/scanned statement OCR is not implemented.
-- After upload, open the GitHub Pages website and refresh. If the old page appears, try a hard refresh or clear the site cache.
+Keep the files together in the same repository folder. All pages use the same browser localStorage on the same site origin, so imported transactions and budgets can be shared between these pages in the same browser. This does not provide cross-device/cloud sync.
+
+Before replacing files, download a backup of your current repository. CSV is the most reliable statement import format. Excel depends on the external XLSX library loading. PDF/scanned OCR is not implemented.
+
+After committing, visit your GitHub Pages URL and use the Overview / Financial Tracker / Budget Planner navigation. Test with a small sample CSV and confirm totals before relying on it. Existing statement data includes a known 18-row extraction gap.
