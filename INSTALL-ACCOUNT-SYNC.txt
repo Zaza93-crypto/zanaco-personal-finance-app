@@ -1,0 +1,40 @@
+ALL MONEY — ACCOUNT CREATION + PER-ACCOUNT CLOUD SYNC
+Target repository: Zaza93-crypto/zanaco-personal-finance-app
+Keep the existing four pages: index.html, budget.html, investment.html, tracker.html.
+Backend: Cloudflare Pages Functions + existing D1 database binding DB. No Supabase.
+
+WHAT THIS PACK CHANGES
+- Adds email + password account registration and sign-in.
+- Stores salted PBKDF2 password hashes, not plain-text passwords.
+- Gives each account its own row in user_app_state.
+- Keeps the current /api/sync path, so the existing cloud-sync.js continues to work.
+- First registered account receives the existing legacy app_state row if it exists.
+- New accounts start with separate empty financial records.
+- Does not alter dashboard page design or delete the old app_state table.
+
+UPLOAD FILES TO THESE EXACT PATHS
+- login.html -> replace root login.html
+- functions/_lib/auth.js -> create
+- functions/api/register.js -> create
+- functions/api/login.js -> replace
+- functions/api/sync.js -> replace
+- functions/api/logout.js -> replace
+- migrations/0004_user_accounts.sql -> create
+
+IMPORTANT BEFORE DEPLOYING
+1. Export/download a dashboard backup from the current browser and any device containing records you need. Do not assume different local browser records merge automatically.
+2. In Cloudflare Pages > Settings > Functions, verify D1 binding name is exactly DB and points to the existing zanaco-finance database.
+3. In Cloudflare Pages > Settings > Variables and Secrets, keep SESSION_SECRET and set it to a unique random value with at least 32 characters. Never publish it in GitHub. APP_PASSWORD is no longer used by this account-based login; it can remain until the new login has been verified.
+4. In the D1 Console for the same database, run the SQL contents of migrations/0004_user_accounts.sql ONCE. This adds tables; it does not drop existing data.
+5. Upload/replace the listed files in GitHub main and commit. Wait for Cloudflare Pages deployment to succeed.
+6. Open the live HTTPS site and choose Create a new account. First registration imports the existing cloud app_state if present.
+7. Sign in on a second browser/device with the same account. Add a dummy budget/target, wait up to 5–10 seconds, and verify it appears on the other device. Then test a change from device B and verify device A.
+8. Only after the test succeeds, continue entering actual financial records.
+
+SYNC BEHAVIOUR AND LIMITATIONS
+- Each account is isolated by its authenticated user ID on the server; changing a client-supplied user ID cannot read another user's records.
+- Existing cloud state is preserved for the first registered account where the legacy app_state table has a row.
+- Existing local-only data on other devices is not automatically merged with cloud data. Back up first and import carefully.
+- The current sync design replaces the account's single JSON state document on each save; simultaneous edits can be last-write-wins. Do not edit the same records simultaneously on two devices until conflict-safe syncing is implemented.
+- Email ownership is not verified in this starter implementation. Treat it as private account sign-in, not a public production banking service. Do not reuse passwords.
+- Deployment is not the same as a successful live test. Confirm account creation and two-device sync before relying on it.

@@ -1,35 +1,20 @@
-// Cloudflare Pages Function: POST /api/login
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
-  });
-}
-async function hmac(secret, value) {
-  const key = await crypto.subtle.importKey(
-    "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value));
-  return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
+import { json, fromB64url, hashPassword, createSession } from "../_lib/auth.js";
 export async function onRequestPost({ request, env }) {
-  if (!env.APP_PASSWORD || !env.SESSION_SECRET) {
-    return json({ error: "Cloudflare secrets APP_PASSWORD and SESSION_SECRET must be configured." }, 503);
-  }
+  if (!env.DB) return json({ error: "Cloudflare D1 binding DB is missing." }, 503);
+  if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) return json({ error: "Configure SESSION_SECRET with at least 32 random characters in Cloudflare Pages." }, 503);
   let body;
   try { body = await request.json(); } catch { return json({ error: "Invalid request." }, 400); }
-  const supplied = String(body.password || "");
-  if (supplied.length > 512 || supplied !== env.APP_PASSWORD) {
-    return json({ error: "Incorrect password." }, 401);
+  const email = String(body.email || "").trim().toLowerCase();
+  const password = String(body.password || "");
+  if (email.length > 254 || password.length > 128) return json({ error: "Invalid email or password." }, 401);
+  try {
+    const user = await env.DB.prepare("SELECT id, email, display_name, password_hash, password_salt FROM users WHERE email = ?").bind(email).first();
+    if (!user) return json({ error: "Email or password is incorrect." }, 401);
+    const calculated = await hashPassword(password, fromB64url(user.password_salt));
+    if (calculated !== user.password_hash) return json({ error: "Email or password is incorrect." }, 401);
+    const cookie = await createSession(user.id, env);
+    return json({ ok: true, email: user.email, name: user.display_name }, 200, { "set-cookie": cookie });
+  } catch (e) {
+    return json({ error: "Sign-in failed. Confirm the account migration was applied in Cloudflare D1." }, 500);
   }
-  const expiry = String(Math.floor(Date.now() / 1000) + 8 * 60 * 60);
-  const token = expiry + "." + await hmac(env.SESSION_SECRET, expiry);
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "set-cookie": `allmoney_session=${token}; Path=/; Max-Age=28800; HttpOnly; Secure; SameSite=Strict`
-    }
-  });
 }
