@@ -1,15 +1,12 @@
-Zanaco Personal Finance App — Registration Diagnostic Fix
+TEMPORARY REGISTRATION DIAGNOSTIC
 
-This ZIP contains only:
-functions/api/register.js
+This ZIP replaces only functions/api/register.js. It temporarily displays the caught database/runtime error in the registration page so we can identify the fault even if Cloudflare runtime logs are unavailable.
 
-How to upload:
+Upload steps:
 1. Extract the ZIP.
-2. In your GitHub repository, open functions/api/register.js.
-3. Replace that file's entire contents with the supplied register.js (do not create a nested extra folder).
-4. Commit the change to main.
-5. Wait for Cloudflare Pages to deploy.
-6. Try registering again, then inspect Pages runtime/Functions logs.
+2. Replace the existing GitHub file at functions/api/register.js with this file's contents.
+3. Commit to main and wait for Cloudflare Pages deployment.
+4. Try registration once and send the exact error text shown on the page.
+5. After diagnosing, replace this temporary diagnostic version with a version that hides internal error details.
 
-This adds server-side diagnostic logging while keeping the browser error generic.
-It does not create or alter database tables, and does not replace any of the four HTML pages.
+Do not share the resulting error publicly; send it only in this chat. Never share passwords, SESSION_SECRET, or API keys.

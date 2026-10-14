@@ -37,7 +37,6 @@ export async function onRequestPost({ request, env }) {
       "INSERT INTO users (id, email, display_name, password_hash, password_salt, created_at) VALUES (?, ?, ?, ?, ?, ?)"
     ).bind(id, email, displayName, passwordHash, saltText, new Date().toISOString()).run();
 
-    // Preserve existing shared dashboard state for the first registered account.
     if (isFirstUser) {
       try {
         const legacy = await env.DB.prepare("SELECT payload FROM app_state WHERE id = 1").first();
@@ -47,22 +46,19 @@ export async function onRequestPost({ request, env }) {
           ).bind(id, legacy.payload, new Date().toISOString()).run();
         }
       } catch (_) {
-        // A fresh D1 database may not have the legacy table.
+        // The legacy app_state table is optional.
       }
     }
 
     const cookie = await createSession(id, env);
     return json({ ok: true, email, name: displayName }, 201, { "set-cookie": cookie });
   } catch (e) {
-    // Diagnostic logging for Cloudflare Pages runtime logs; do not expose internals to the browser.
-    console.error(
-      "Account registration failed:",
-      e instanceof Error ? (e.stack || e.message) : String(e)
-    );
-
-    if (String(e).includes("UNIQUE")) {
-      return json({ error: "An account with that email already exists." }, 409);
+    console.error("Account registration failed:", e instanceof Error ? (e.stack || e.message) : String(e));
+    const message = e instanceof Error ? e.message : String(e);
+    if (message.includes("UNIQUE")) {
+      return json({ error: "An account with that email already exists. Sign in instead." }, 409);
     }
-    return json({ error: "Account creation failed. Check Cloudflare Pages runtime logs for the registration error." }, 500);
+    // TEMPORARY DIAGNOSTIC: remove this detail after the fault is identified.
+    return json({ error: "Temporary diagnostic: " + message.slice(0, 240) }, 500);
   }
 }
