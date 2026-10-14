@@ -1,0 +1,90 @@
+/* CashFlix-inspired landing/dashboard redesign for All Money */
+:root{
+  --bg:#f4f5f7;--panel:#fff;--panel2:#f8f9fb;--text:#202124;--muted:#737780;
+  --line:#e8e9ec;--green:#18b6ae;--red:#e56d78;--blue:#459bc1;--gold:#f1b51c;
+}
+html,body{background:#f1f2f4!important;color:#202124!important}
+body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+.wrap{max-width:1440px!important;margin:0 auto!important;padding:28px 26px 60px 250px!important}
+.top{align-items:center!important;margin-bottom:20px}
+.brand{gap:12px}
+.logo{background:#e3f5f3!important;color:#159e9c!important;box-shadow:none!important;border-radius:14px!important}
+.eyebrow{color:#239e9e!important;letter-spacing:2px!important;text-transform:uppercase!important;font-size:11px!important;font-weight:800}
+.title{font-size:28px!important;letter-spacing:-.7px!important;color:#202124!important}
+.muted,.sub,.small,.metric-label{color:#7d828b!important}
+.actions{gap:8px}
+.btn{background:#fff!important;color:#3d424a!important;border:1px solid #e3e5e8!important;border-radius:11px!important;box-shadow:0 2px 7px #1b253008!important}
+.btn.primary,.primary{background:#18b6ae!important;color:white!important;border-color:#18b6ae!important}
+.page-nav{
+ position:fixed!important;z-index:100!important;left:18px!important;top:22px!important;bottom:22px!important;
+ width:208px!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ flex-wrap:nowrap!important;gap:5px!important;padding:18px 12px!important;margin:0!important;
+ background:#fff!important;border:1px solid #e8e9ec!important;border-radius:20px!important;
+ box-shadow:0 8px 28px #1e2a3a0b!important;backdrop-filter:none!important;overflow-y:auto!important;
+}
+.page-nav:before{content:"ALL MONEY";display:block;color:#30333a;font-size:17px;font-weight:900;letter-spacing:.3px;padding:5px 12px 22px}
+.page-nav a{display:flex!important;align-items:center!important;justify-content:flex-start!important;white-space:normal!important;
+ padding:12px 13px!important;border:0!important;border-radius:10px!important;color:#5f6570!important;font-size:13px!important;font-weight:700!important}
+.page-nav a:before{display:inline-block;width:24px;flex-shrink:0;color:#858b95;font-size:15px}
+.page-nav a[data-page-link="home"]:before{content:"▦"}
+.page-nav a[data-page-link="tracker"]:before{content:"⇄"}
+.page-nav a[data-page-link="budget"]:before{content:"▤"}
+.page-nav a[data-page-link="investment"]:before{content:"▣"}
+.page-nav a.active,.page-nav a:hover{background:#e3f6f4!important;color:#148e8d!important}
+.notice{border-radius:13px!important;background:#fff9e9!important;border-color:#f0e2bc!important;color:#7b6637!important}
+.overview-hero,.hero{background:#fff!important;color:#202124!important;border:1px solid #e8e9ec!important;border-radius:18px!important;
+ box-shadow:0 5px 18px #1b25300b!important;padding:22px 24px!important}
+.overview-hero h2{color:#6f7680!important;font-size:12px!important;letter-spacing:1.3px!important}
+.overview-hero .eyebrow,.overview-hero .muted{color:#818791!important}
+.overview-total{color:#202124!important;font-size:34px!important;font-weight:800!important}
+.overview-hero .hero-bottom{gap:30px!important;margin-top:18px!important}
+.hero-stat small{color:#8b9098!important}
+.hero-stat strong{color:#30343a!important}
+.hero-chip{background:#e2f6f4!important;color:#138d8c!important;border:0!important}
+.overview-quick{gap:12px!important}
+.quick-card,.card,.panel,.percentage-panel,.holding-teaser,.budgetcard,.alert{
+ background:#fff!important;color:#202124!important;border:1px solid #e8e9ec!important;border-radius:17px!important;
+ box-shadow:0 5px 18px #1b25300a!important
+}
+.quick-card{padding:18px!important}
+.quick-icon{background:#e8f4f5!important;color:#3f99a8!important}
+.quick-card:nth-child(2) .quick-icon{background:#fff3de!important;color:#d9a02b!important}
+.quick-card:nth-child(3) .quick-icon{background:#e2f6ef!important;color:#25a48b!important}
+.quick-label,.quick-foot{color:#7c828c!important}
+.quick-value,.metric{color:#24272d!important}
+.overview-section-title{color:#252830!important;font-size:18px!important}
+.percentage-panel{padding:20px!important}
+.percent-ring{background:conic-gradient(#48a9c8 0deg 180deg,#ed8a32 180deg 270deg,#f1c21b 270deg 360deg)!important}
+.percent-ring:before{background:#fff!important}
+.bars{background:#edf0f2!important}
+.barin{background:#48a9c8!important}
+.barout{background:#ed963e!important}
+.progress{background:#eceef1!important}
+.progress span{background:#18b6ae!important}
+.progress span.over{background:#e56d78!important}
+select,input,textarea{background:#fff!important;color:#30343a!important;border:1px solid #e2e5e8!important;border-radius:10px!important}
+.catrow{border-color:#eef0f2!important}
+th{background:#f5f6f8!important;color:#6f7680!important}
+td,th{border-bottom-color:#eceef0!important}
+.pill{background:#e8f4f5!important;color:#218b92!important;border:0!important}
+.tag{background:#fff3de!important;color:#956b22!important}
+.mobile-bottom{background:#fff!important;border:1px solid #e7e9ed!important}
+.mobile-bottom a.active{background:#e3f6f4!important;color:#148e8d!important}
+@media(max-width:900px){
+ .wrap{padding:18px 14px 95px!important}
+ .page-nav{position:static!important;width:auto!important;height:auto!important;bottom:auto!important;left:auto!important;top:auto!important;
+  display:flex!important;flex-direction:row!important;overflow-x:auto!important;padding:7px!important;margin:0 0 16px!important;
+  border-radius:13px!important;gap:4px!important}
+ .page-nav:before{display:none!important}
+ .page-nav a{flex:0 0 auto!important;justify-content:center!important;white-space:nowrap!important;padding:10px 12px!important;font-size:12px!important}
+ .page-nav a:before{display:none!important}
+ .top{gap:12px}
+ .actions{width:100%}
+}
+@media(max-width:560px){
+ .title{font-size:24px!important}
+ .overview-hero{padding:20px!important}
+ .overview-total{font-size:29px!important}
+ .quick-card{padding:14px!important}
+ .quick-value{font-size:21px!important}
+}

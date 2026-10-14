@@ -1,0 +1,26 @@
+/* USD/ZMW currency tracker add-on */
+.usd-tracker{margin:18px 0 22px;padding:22px;background:#fff;border:1px solid #e8e9ec;border-radius:19px;box-shadow:0 6px 20px #1b25300a;color:#202124}
+.usd-tracker-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:17px}
+.usd-tracker-eyebrow{font-size:11px;font-weight:850;letter-spacing:1.7px;color:#159b98;margin-bottom:5px}
+.usd-tracker h2{margin:0;font-size:21px;letter-spacing:-.4px;color:#202124}
+.usd-tracker p{margin:5px 0 0;font-size:13px;color:#7d828b}
+.usd-refresh{border:0;border-radius:10px;background:#e2f6f4;color:#128e8c;font-weight:800;padding:10px 13px;cursor:pointer;white-space:nowrap}
+.usd-refresh:disabled{opacity:.65;cursor:wait}
+.usd-rate-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.usd-rate-main{padding:21px;border-radius:15px;background:linear-gradient(130deg,#182c3d,#284858);color:#fff;min-width:0}
+.usd-pair{font-size:13px;font-weight:800;color:#c9e8e7;letter-spacing:.4px}
+.usd-pair span{padding:0 8px;color:#80d4d0}
+.usd-rate{font-size:clamp(28px,4vw,38px);font-weight:900;letter-spacing:-1px;margin:17px 0 4px;overflow-wrap:anywhere}
+.usd-rate-caption{font-size:13px;color:#d1e0e6}
+.usd-rate-foot{font-size:11px;color:#a8c0cb;margin-top:16px;line-height:1.5}
+.usd-converter{border:1px solid #e9ebef;border-radius:15px;padding:17px;min-width:0}
+.usd-converter label,.usd-reverse-label{display:block;font-size:12px;font-weight:800;color:#707783;margin-bottom:8px}
+.usd-input-row{display:flex;align-items:center;gap:8px;background:#f7f8fa;border:1px solid #e6e8ec;border-radius:10px;padding:0 11px}
+.usd-input-row span{font-weight:850;color:#6e7581}
+.usd-input-row input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;padding:12px 0!important;color:#222!important;box-shadow:none!important}
+.usd-convert-result{font-size:22px;font-weight:900;color:#149b96;margin:10px 0 2px;overflow-wrap:anywhere}
+.usd-convert-caption{font-size:11px;color:#858b96;margin-bottom:16px}
+.usd-reverse-label{margin:10px 0 8px}
+.usd-convert-result.secondary{font-size:19px;color:#5d67bd;margin-bottom:0}
+.usd-tracker-note{font-size:11px;color:#818792;line-height:1.5;margin-top:14px}
+@media(max-width:650px){.usd-tracker{padding:15px;border-radius:17px}.usd-tracker-head{align-items:flex-start;flex-direction:column}.usd-refresh{width:100%}.usd-rate-grid{grid-template-columns:1fr}.usd-rate-main{padding:18px}.usd-converter{padding:15px}}

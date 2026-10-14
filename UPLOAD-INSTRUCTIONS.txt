@@ -1,15 +1,19 @@
-Zanaco Personal Finance App — PBKDF2 compatibility fix
+All Money / Zanaco Personal Finance App — Add a Logout button
 
-The error says the current password hashing requests 210,000 PBKDF2 iterations, but this Cloudflare runtime supports at most 100,000.
+This ZIP adds a visible Log out button to the existing dashboard pages. It uses the existing POST endpoint at /api/logout, which clears the allmoney_session cookie, and then redirects to login.html.
 
-Upload ONLY:
-functions/_lib/auth.js
+Files:
+- logout.js
 
-Steps:
-1. Extract this ZIP.
-2. In GitHub open functions/_lib/auth.js.
-3. Replace the entire file with the included auth.js (keep the path exactly; do not add a nested folder).
-4. Commit to main and wait for Cloudflare Pages deployment.
-5. Try creating the account again.
+Upload:
+1. Extract the ZIP.
+2. Upload logout.js to the repository ROOT (same level as index.html, budget.html, investment.html, tracker.html).
+3. In each of these four files — index.html, budget.html, investment.html, tracker.html — add this line just before </body>:
+   <script src="/logout.js" defer></script>
+4. Commit the changes to main and wait for Cloudflare Pages to deploy.
+5. Open the dashboard and confirm the Log out button appears at the top-right. Tap it; it should sign out and return to login.html.
 
-The same hashPassword function is used by registration and login, so both will use 100,000 iterations. This change does not alter D1 tables or the four dashboard pages.
+Important:
+- Do not replace or delete your existing pages or database tables.
+- The existing logout API route is functions/api/logout.js and accepts POST requests.
+- This adds a small fixed-position button; it does not change your dashboard layout or financial records.
