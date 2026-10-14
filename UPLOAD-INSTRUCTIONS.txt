@@ -1,12 +1,15 @@
-TEMPORARY REGISTRATION DIAGNOSTIC
+Zanaco Personal Finance App — PBKDF2 compatibility fix
 
-This ZIP replaces only functions/api/register.js. It temporarily displays the caught database/runtime error in the registration page so we can identify the fault even if Cloudflare runtime logs are unavailable.
+The error says the current password hashing requests 210,000 PBKDF2 iterations, but this Cloudflare runtime supports at most 100,000.
 
-Upload steps:
-1. Extract the ZIP.
-2. Replace the existing GitHub file at functions/api/register.js with this file's contents.
-3. Commit to main and wait for Cloudflare Pages deployment.
-4. Try registration once and send the exact error text shown on the page.
-5. After diagnosing, replace this temporary diagnostic version with a version that hides internal error details.
+Upload ONLY:
+functions/_lib/auth.js
 
-Do not share the resulting error publicly; send it only in this chat. Never share passwords, SESSION_SECRET, or API keys.
+Steps:
+1. Extract this ZIP.
+2. In GitHub open functions/_lib/auth.js.
+3. Replace the entire file with the included auth.js (keep the path exactly; do not add a nested folder).
+4. Commit to main and wait for Cloudflare Pages deployment.
+5. Try creating the account again.
+
+The same hashPassword function is used by registration and login, so both will use 100,000 iterations. This change does not alter D1 tables or the four dashboard pages.

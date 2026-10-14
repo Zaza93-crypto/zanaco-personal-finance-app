@@ -16,10 +16,12 @@ export async function hmac(secret, value) {
   return b64url(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value)));
 }
 
+// Cloudflare Pages Web Crypto supports PBKDF2 iteration counts up to 100,000.
+// Keep this value identical for registration and login password verification.
 export async function hashPassword(password, saltBytes) {
   const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: saltBytes, iterations: 210000, hash: "SHA-256" },
+    { name: "PBKDF2", salt: saltBytes, iterations: 100000, hash: "SHA-256" },
     material, 256
   );
   return b64url(bits);
