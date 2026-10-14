@@ -5,5 +5,5 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "zanaco-finance"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "db99d649-9960-41fb-8608-a3e40e973f4d"
 migrations_dir = "migrations"
