@@ -37,7 +37,7 @@ export async function onRequestPost({ request, env }) {
       "INSERT INTO users (id, email, display_name, password_hash, password_salt, created_at) VALUES (?, ?, ?, ?, ?, ?)"
     ).bind(id, email, displayName, passwordHash, saltText, new Date().toISOString()).run();
 
-    // Preserve the existing shared dashboard state for the first registered account.
+    // Preserve existing shared dashboard state for the first registered account.
     if (isFirstUser) {
       try {
         const legacy = await env.DB.prepare("SELECT payload FROM app_state WHERE id = 1").first();
@@ -54,9 +54,15 @@ export async function onRequestPost({ request, env }) {
     const cookie = await createSession(id, env);
     return json({ ok: true, email, name: displayName }, 201, { "set-cookie": cookie });
   } catch (e) {
+    // Diagnostic logging for Cloudflare Pages runtime logs; do not expose internals to the browser.
+    console.error(
+      "Account registration failed:",
+      e instanceof Error ? (e.stack || e.message) : String(e)
+    );
+
     if (String(e).includes("UNIQUE")) {
       return json({ error: "An account with that email already exists." }, 409);
     }
-    return json({ error: "Account creation failed. Confirm the account migration was applied in Cloudflare D1." }, 500);
+    return json({ error: "Account creation failed. Check Cloudflare Pages runtime logs for the registration error." }, 500);
   }
 }

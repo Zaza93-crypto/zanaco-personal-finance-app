@@ -1,0 +1,15 @@
+Zanaco Personal Finance App — Registration Diagnostic Fix
+
+This ZIP contains only:
+functions/api/register.js
+
+How to upload:
+1. Extract the ZIP.
+2. In your GitHub repository, open functions/api/register.js.
+3. Replace that file's entire contents with the supplied register.js (do not create a nested extra folder).
+4. Commit the change to main.
+5. Wait for Cloudflare Pages to deploy.
+6. Try registering again, then inspect Pages runtime/Functions logs.
+
+This adds server-side diagnostic logging while keeping the browser error generic.
+It does not create or alter database tables, and does not replace any of the four HTML pages.
