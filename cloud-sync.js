@@ -120,8 +120,10 @@
       const localChanged = stable(local) !== stable(lastSnapshot);
       const cloudChanged = stable(result.state) !== stable(lastCloudState);
 
-      // Compare payloads rather than relying only on updated_at timestamps.
-      if (cloudChanged && !localChanged) {
+      // If D1 has changed since the last poll, pull it even if this page has
+      // stale local changes. Otherwise a newly opened device can overwrite
+      // newer cloud records with its old browser cache.
+      if (cloudChanged) {
         busy = true;
         try {
           apply(result.state);
