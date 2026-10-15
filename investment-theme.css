@@ -1,0 +1,51 @@
+/* Zanaco Personal Finance App — unified dark fintech theme */
+:root{
+  --bg:#090909;--panel:#171719;--panel2:#222225;--text:#f6f4f8;--muted:#aaa7b2;
+  --line:#343238;--accent:#c8b8ff;--accent-strong:#b39aff;--good:#c9f2a8;
+  --bad:#ff9aab;--radius:24px;
+}
+html{color-scheme:dark}
+body{background:var(--bg)!important;color:var(--text)!important}
+.wrap,.shell{max-width:1180px!important}
+.top,.topbar{margin-bottom:22px}
+.brand,.brand span{color:var(--text)}
+.logo,.brandmark{background:var(--accent)!important;color:#17131f!important;box-shadow:none!important}
+a{transition:color .15s ease,background .15s ease}
+button,.btn,.button,input,select,textarea{border-radius:14px}
+button,.btn,.button{font-weight:750}
+input,select,textarea{background:#222225!important;color:var(--text)!important;border:1px solid var(--line)!important}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent)!important;outline-offset:1px}
+section,.card,.panel,.tile,.hero-card,.balance-card,.stat,.stat-card,.summary-card,.chart-card,.budget-card,.investment-card,.holding-card,.table-wrap,.form-card{
+  border-color:var(--line)!important;
+}
+.card,.panel,.stat,.stat-card,.summary-card,.chart-card,.budget-card,.investment-card,.holding-card,.table-wrap,.form-card,.tile,.balance-card{
+  background:var(--panel)!important;border:1px solid var(--line)!important;border-radius:var(--radius)!important;box-shadow:none!important;
+}
+h1,h2,h3,h4,.title{color:var(--text)}
+p,.muted,.sub,.small,.subtle{color:var(--muted)}
+.eyebrow{color:var(--accent)!important}
+.btn-primary,.primary,.submit,.btn-light{background:var(--accent)!important;color:#181321!important;border:0!important}
+.btn-secondary,.btn-glass,.secondary{background:#27252d!important;color:var(--text)!important;border:1px solid var(--line)!important}
+.badge,.pill,.chip{border-radius:999px}
+.progress,.progress-bar,.bar-track{background:#38353f!important;border-radius:999px;overflow:hidden}
+.progress-fill,.bar-fill{background:var(--accent)!important}
+.positive,.gain,.success{color:var(--good)!important}
+.negative,.loss,.danger{color:var(--bad)!important}
+table{border-color:var(--line)!important}
+th{color:var(--muted)!important}
+td,th{border-color:var(--line)!important}
+.page-nav,.bottom-nav{background:#111112eF!important;border-color:var(--line)!important;backdrop-filter:blur(16px)}
+.page-nav a,.bottom-nav a{color:var(--muted)}
+.page-nav a.active,.bottom-nav a.active{color:var(--accent)!important}
+@media(max-width:760px){
+  .wrap,.shell{padding:16px 14px 100px!important}
+  .card,.panel,.stat-card,.summary-card,.chart-card,.budget-card,.investment-card,.holding-card,.form-card{border-radius:20px!important}
+  .page-nav{overflow-x:auto;flex-wrap:nowrap}
+}
+
+/* Investment page: portfolio-first presentation */
+.hero,.portfolio-hero{background:transparent}
+.portfolio-value,.total-value,.hero h1{letter-spacing:-.045em}
+.chart,.chart-container,.portfolio-chart{background:var(--panel)!important;border:1px solid var(--line)!important;border-radius:var(--radius)!important;padding:16px}
+.holding,.holding-row,.asset-row,.investment-row{background:var(--panel)!important;border:1px solid var(--line)!important;border-radius:18px!important}
+.asset-icon,.holding-icon{background:#292530!important;color:var(--accent)!important}

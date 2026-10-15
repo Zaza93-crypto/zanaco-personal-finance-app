@@ -1,22 +1,31 @@
-ALL MONEY WEBSITE REDESIGN — FULL SITE THEME
+ZANACO PERSONAL FINANCE APP — DARK FINTECH THEME PATCH
+=====================================================
 
-This package changes the visual presentation of the website pages to match the supplied mobile finance reference:
-- coral / pink / purple gradient accents
-- warm white background and rounded cards
-- consistent buttons, forms, tables and navigation
-- responsive layouts for phone and desktop
-- existing logout and cloud-sync scripts injected by middleware
+This ZIP contains CSS theme overrides for:
+- Overview (index.html)
+- Budget (budget.html)
+- Investment (investment.html)
 
-FILES
-- unified-theme.css (upload to repository root)
-- functions/_middleware.js (replace the existing file)
-- README.txt
+The patch is intentionally CSS-only. It does not modify JavaScript, login/logout,
+Cloudflare Pages configuration, D1 database code, or cross-device synchronisation.
 
-UPLOAD
-1. Extract this ZIP.
-2. Upload unified-theme.css to the repository root.
-3. Replace functions/_middleware.js with the included file.
-4. Keep index.html, budget.html, investment.html, tracker.html, login.html, API functions, migrations, cloud-sync.js, logout.js and wrangler.toml unchanged.
-5. Commit the changes to the branch connected to Cloudflare Pages and wait for deployment.
+HOW TO APPLY
+1. Unzip the archive.
+2. Upload the three CSS files to the same root folder as index.html, budget.html,
+   and investment.html in your GitHub repository.
+3. In index.html, add this line immediately before </head>:
+   <link rel="stylesheet" href="overview-theme.css">
+4. In budget.html, add this line immediately before </head>:
+   <link rel="stylesheet" href="budget-theme.css">
+5. In investment.html, add this line immediately before </head>:
+   <link rel="stylesheet" href="investment-theme.css">
+6. Commit the changes and wait for Cloudflare Pages to deploy.
+7. Reload the site. On mobile, if the old styles remain, clear the browser cache
+   or open the page in a private tab.
 
-The middleware injects the stylesheet and existing scripts into the four dashboard pages. It corrects the head-tag regex and uses valid newline separators. This is a manual-upload package; it has not been deployed or verified live.
+IMPORTANT
+- Keep the existing four pages, including tracker.html.
+- Do not delete or replace existing scripts or data-sync code.
+- This ZIP contains theme overrides, not full replacement HTML pages.
+- CSS selectors vary across existing pages; review the result after deployment.
+  The override uses common existing classes and generic card/control selectors.
