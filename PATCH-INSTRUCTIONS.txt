@@ -1,0 +1,41 @@
+ZANACO / ALL MONEY — ENABLE CLOUD SYNC ON ALL FOUR DASHBOARD PAGES
+
+Why this fix is needed
+The repository already contains cloud-sync.js and the /api/sync backend, but the four dashboard HTML files do not load cloud-sync.js. Therefore, browser localStorage changes are not sent to Cloudflare D1.
+
+Files to edit in GitHub (main branch)
+1. index.html
+2. budget.html
+3. tracker.html
+4. investment.html
+
+For EACH of the four files:
+1. Open the file in GitHub and tap Edit (pencil).
+2. Find the final closing tag: </body>
+3. Insert the following line immediately ABOVE </body>:
+
+<script src="cloud-sync.js?v=20261015-sync1"></script>
+
+4. Save/commit the change.
+5. Repeat for the other three HTML files.
+Do not replace the full HTML files and do not delete any existing code.
+
+Important
+- cloud-sync.js already exists in the repository root, so do not create a duplicate.
+- Keep Cloudflare Pages connected to the existing GitHub repository.
+- Keep the D1 binding named DB and pointed at the existing zanaco-finance database.
+- Keep SESSION_SECRET configured in Cloudflare Pages.
+- Wait for the Cloudflare deployment to finish before testing.
+
+Test after deployment
+1. Open the live HTTPS site on Device A and sign in.
+2. Add a harmless test budget or test transaction, then wait 5–10 seconds.
+3. Open the same site on Device B and sign in with the SAME account.
+4. Wait up to 10 seconds or refresh once. Confirm the test item appears.
+5. Make a second test change on Device B and confirm it returns to Device A.
+
+Data safety
+The current sync endpoint stores one JSON state document per account. Existing cloud state takes priority over local browser state when it is loaded. Back up any important device-local data before syncing. Do not make simultaneous edits on both devices until conflict-safe merging is implemented.
+
+If sync reports an error
+Read the Cloudflare sync notice displayed near the top of the page. A 401 indicates a sign-in/session issue; a 500 usually indicates a D1 table/binding or migration issue. Do not share passwords or SESSION_SECRET in screenshots.
