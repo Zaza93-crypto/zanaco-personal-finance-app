@@ -1,0 +1,20 @@
+ZANACO PERSONAL FINANCE APP — SYNC LINK PATCH
+
+This is a small patch package, NOT replacement copies of your four HTML pages.
+
+In each existing file:
+  index.html
+  budget.html
+  investment.html
+  tracker.html
+
+Insert this line immediately before the final closing </body> tag:
+
+<script src="/cloud-sync.js"></script>
+
+Do not delete or replace any existing page code. Keep cloud-sync.js in the same root folder as these four HTML files.
+
+After upload, wait for Cloudflare Pages to deploy, then open the site and check for the Cloudflare sync status message.
+
+IMPORTANT:
+This patch only loads the existing sync script. It does not by itself verify that /api/sync, login/logout, or the D1 binding is working.
