@@ -1,19 +1,28 @@
-All Money / Zanaco Personal Finance App — Add a Logout button
+ZANACO PERSONAL FINANCE APP — LOGOUT FIX
+========================================
 
-This ZIP adds a visible Log out button to the existing dashboard pages. It uses the existing POST endpoint at /api/logout, which clears the allmoney_session cookie, and then redirects to login.html.
+WHY LOGOUT MAY NOT BE WORKING
+Your repository has a logout.js script and /api/logout endpoint, but the
+dashboard pages may not be loading logout.js. This upload updates the
+Cloudflare Pages middleware to load it automatically on all four dashboard
+pages. It also keeps cloud-sync.js and the login gate enabled.
 
-Files:
-- logout.js
+UPLOAD
+1. Extract this ZIP.
+2. In GitHub, open Zaza93-crypto/zanaco-personal-finance-app.
+3. Open the functions folder.
+4. Upload the provided _middleware.js and commit it to the same branch
+   Cloudflare Pages deploys.
+5. Wait for the deployment to finish.
+6. Open the website, hard refresh/reload, and check for the Log out button.
 
-Upload:
-1. Extract the ZIP.
-2. Upload logout.js to the repository ROOT (same level as index.html, budget.html, investment.html, tracker.html).
-3. In each of these four files — index.html, budget.html, investment.html, tracker.html — add this line just before </body>:
-   <script src="/logout.js" defer></script>
-4. Commit the changes to main and wait for Cloudflare Pages to deploy.
-5. Open the dashboard and confirm the Log out button appears at the top-right. Tap it; it should sign out and return to login.html.
-
-Important:
-- Do not replace or delete your existing pages or database tables.
-- The existing logout API route is functions/api/logout.js and accepts POST requests.
-- This adds a small fixed-position button; it does not change your dashboard layout or financial records.
+IMPORTANT
+- If functions/_middleware.js already exists, download a backup first.
+  This file replaces that middleware, so merge existing middleware logic
+  rather than overwriting it if it contains other important logic.
+- The repository should already contain root files logout.js and
+  cloud-sync.js, plus functions/api/logout.js and functions/api/sync.js.
+- This ZIP has not been deployed to GitHub or tested on the live site.
+- If clicking Log out still fails after this deploy, inspect the browser
+  Network tab for POST /api/logout. A 404 suggests the Pages Function route
+  isn't deployed; a 500 suggests a function/runtime issue.
