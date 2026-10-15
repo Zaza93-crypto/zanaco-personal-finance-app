@@ -1,17 +1,25 @@
-ZANACO / ALL MONEY LANDING PAGE REDESIGN
+ALL MONEY / ZANACO PERSONAL FINANCE — UNIFIED DESIGN UPDATE
 
-This ZIP contains a redesigned index.html inspired by the supplied reference:
-- coral / pink / purple gradient hero
-- clean finance overview card
-- quick links to Tracker, Budget, Investments and Account
-- responsive layout with mobile bottom navigation
+This package applies one shared visual theme across the four existing dashboard pages:
+- index.html
+- budget.html
+- investment.html
+- tracker.html
 
-MANUAL DEPLOYMENT
-1. Extract this ZIP.
-2. In your GitHub repository, replace only the root index.html with this index.html.
-3. Keep budget.html, investment.html, tracker.html, login.html, the functions folder, migrations, cloud-sync.js, logout.js and wrangler.toml unchanged.
-4. Commit to the branch connected to Cloudflare Pages and wait for deployment.
-5. Open the main website link and confirm the login redirect and navigation.
+The design follows the chosen landing page: warm white surfaces, coral/pink/purple gradients, rounded cards, consistent controls and mobile-friendly navigation.
+
+ZIP contents:
+- unified-theme.css
+- functions/_middleware.js
+- README.txt
+
+MANUAL UPLOAD
+1. Extract the ZIP.
+2. Upload unified-theme.css to the repository root.
+3. Replace functions/_middleware.js with the included file.
+4. Keep index.html, budget.html, investment.html, tracker.html, login.html, cloud-sync.js, logout.js, all API functions, migrations and wrangler.toml unchanged.
+5. Commit the two file changes to the branch connected to Cloudflare Pages.
+6. Wait for deployment, then open each of the four pages and check the shared theme.
 
 IMPORTANT
-This is a visual landing-page replacement. It does not contain any new fabricated balance or transaction data. The existing other three pages remain separate. Since GitHub write access previously returned 403, this package is for manual upload and has not been deployed by this action.
+The middleware injects the shared stylesheet and the existing logout/sync scripts on all four dashboard pages. It does not replace any page's transaction, budget, investment, or tracker logic, and it does not change the D1 schema. This ZIP is prepared for manual upload; it has not been deployed to the live site.
