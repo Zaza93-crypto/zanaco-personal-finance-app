@@ -1,16 +1,12 @@
-ALL MONEY — STATEMENT IMPORT FIX
+ALL MONEY — MONTHLY FINANCIAL REPORTS
 
-Replace only tracker.html in the root of the GitHub repository used by Cloudflare Pages.
+Included: index.html only.
 
-This update:
-- Adds PDF to the upload picker.
-- Loads the Excel reader only when an XLS/XLSX file is imported, with a fallback CDN.
-- Adds PDF.js text extraction for text-based PDF statements.
-- Gives clearer error messages for unsupported layouts and scanned/image-only PDFs.
-- Preserves the existing transaction review, duplicate checks, category assignment, and local save behavior.
+Install:
+1. Download and extract the ZIP.
+2. Replace index.html in the root of the existing GitHub repository with this file.
+3. Commit the change to the deployment branch and wait for Cloudflare Pages to deploy.
+4. Open Overview and use “Monthly financial health report”.
+5. Select a month, update the report, and use “Print / Save report as PDF”.
 
-Important limitations:
-- Scanned/image-only PDFs need OCR first.
-- PDF statement layouts vary; a text-based PDF can open but still need a format-specific parser if its columns cannot be recognized.
-- These external reader libraries need an internet connection to load.
-- After replacing tracker.html, commit it and wait for Cloudflare Pages deployment. Test with a copy of a statement and review imported totals before relying on them.
+The report uses the existing transaction and budget arrays already used by the overview. It does not create a new database or claim that local browser storage syncs across devices. Figures are limited to recorded rows; review imports and classifications. Print output is limited to the report panel.
