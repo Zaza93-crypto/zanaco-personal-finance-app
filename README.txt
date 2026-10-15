@@ -1,23 +1,22 @@
-ZANACO PERSONAL FINANCE APP — LIVE THEME FIX
+ALL MONEY — UNIFIED DARK THEME PATCH
 
-This patch fixes the mismatch between the CSS theme files and the stylesheet injected by Cloudflare Pages middleware.
+Files included:
+- tracker.html
+- budget.html
+- investment.html
 
-UPLOAD ONE FILE:
-  functions/_middleware.js
+What this patch does:
+- Removes the explicit light-theme CSS override that made these three pages white while the homepage used the dark All Money design.
+- Restores the pages' existing dark-blue theme variables and styling.
+- Preserves the existing page HTML and JavaScript features; this is a visual-only patch.
 
-HOW TO APPLY ON GITHUB MOBILE:
-1. Open the repository:
-   https://github.com/Zaza93-crypto/zanaco-personal-finance-app
-2. Open the functions folder, then _middleware.js.
-3. Edit the file and replace its entire contents with the _middleware.js included in this ZIP.
-4. Commit the change to the main branch.
-5. Wait for Cloudflare Pages to finish the Production deployment.
-6. Open https://zanaco-personal-finance-app.pages.dev/?refresh=20261016
-   and refresh the Budget and Investment pages too.
+Manual upload:
+1. Download and unzip this package.
+2. In the GitHub repository used by the Cloudflare Pages project, replace the existing tracker.html, budget.html, and investment.html with these three files.
+3. Commit the three files to the deployment branch.
+4. Wait for Cloudflare Pages to finish deploying.
+5. Open each page and hard-refresh (Ctrl+Shift+R on desktop) or test in a private/incognito window.
 
-IMPORTANT:
-- Do not delete the existing logout.js or cloud-sync.js files.
-- This middleware continues loading those scripts and preserving the login redirect check.
-- It uses the existing overview-theme.css, budget-theme.css and investment-theme.css files.
-- No D1 database, migrations, login credentials, or stored finance records are changed.
-- GitHub direct write access was denied in this session, so this patch must be uploaded manually.
+Important:
+- Do not replace index.html with this package; your homepage is already displaying the new design.
+- This patch does not change database/sync configuration or claim that a deployment has completed.
