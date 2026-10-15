@@ -1,23 +1,182 @@
-/* Cloudflare D1 sync for All Money. */
+/* Cloudflare D1 sync for All Money. Shared state lives in D1; localStorage is a page cache. */
 (() => {
-  const KEYS = ['allmoney_imports','allmoney_budgets','allmoney_investments_v1','allmoney_investment_fx','allmoney_investment_target_v1'];
+  const KEYS = [
+    'allmoney_imports',
+    'allmoney_budgets',
+    'allmoney_investments_v1',
+    'allmoney_investment_fx',
+    'allmoney_investment_target_v1'
+  ];
   if (location.pathname.endsWith('login.html')) return;
-  function notice(message, error=false) {
-    let el=document.getElementById('cloudSyncNotice');
-    if(!el){el=document.createElement('div');el.id='cloudSyncNotice';el.style.cssText='margin:10px 0;padding:10px 13px;border-radius:10px;font:13px system-ui;overflow-wrap:anywhere;position:relative;z-index:10;';(document.querySelector('main')||document.body).prepend(el);}
-    el.textContent=message;el.style.background=error?'#fff0f1':'#e8f8f3';el.style.color=error?'#a63242':'#14765e';
+
+  function notice(message, error = false) {
+    let el = document.getElementById('cloudSyncNotice');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'cloudSyncNotice';
+      el.style.cssText = 'margin:10px 0;padding:10px 13px;border-radius:10px;font:13px system-ui;overflow-wrap:anywhere;position:relative;z-index:10;';
+      (document.querySelector('main') || document.querySelector('.wrap') || document.body).prepend(el);
+    }
+    el.textContent = message;
+    el.style.background = error ? '#fff0f1' : '#e8f8f3';
+    el.style.color = error ? '#a63242' : '#14765e';
   }
-  const stable=x=>JSON.stringify(x,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((o,key)=>(o[key]=v[key],o),{}):v);
-  function snapshot(){const s={};for(const k of KEYS){const raw=localStorage.getItem(k);if(raw===null)s[k]=null;else{try{s[k]=JSON.parse(raw)}catch{s[k]=raw}}}return s;}
-  function apply(s){for(const k of KEYS){if(!Object.prototype.hasOwnProperty.call(s||{},k))continue;if(s[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,typeof s[k]==='string'?s[k]:JSON.stringify(s[k]));}}
-  async function request(url,options={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',headers:{'content-type':'application/json',...(options.headers||{})},...options});let d={};try{d=await r.json()}catch{}if(r.status===401){location.replace('/login.html');throw Error('Your session expired. Please sign in again.')}if(!r.ok)throw Error(d.error||`Request failed (${r.status})`);return d;}
-  let ready=false,busy=false,timer=null,lastCloudStamp=null,lastSnapshot=null;
-  const originalSet=localStorage.setItem.bind(localStorage),originalRemove=localStorage.removeItem.bind(localStorage);
-  function schedule(){if(!ready)return;clearTimeout(timer);timer=setTimeout(()=>push(),700);}
-  localStorage.setItem=function(k,v){originalSet(k,v);if(KEYS.includes(String(k)))schedule()};
-  localStorage.removeItem=function(k){originalRemove(k);if(KEYS.includes(String(k)))schedule()};
-  async function push(){if(!ready||busy)return;const current=snapshot();if(stable(current)===stable(lastSnapshot))return;busy=true;try{const result=await request('/api/sync',{method:'PUT',body:JSON.stringify({state:current})});lastSnapshot=current;lastCloudStamp=result.updatedAt||lastCloudStamp;notice('Cloud sync saved. Checking for updates from your other devices.');}catch(e){notice('Cloud sync error: '+e.message,true)}finally{busy=false;if(stable(snapshot())!==stable(lastSnapshot))schedule();}}
-  async function poll(){if(!ready||busy)return;try{const result=await request('/api/sync');if(!result.state)return;const current=snapshot();if(result.updatedAt&&result.updatedAt!==lastCloudStamp&&stable(current)!==stable(result.state)){busy=true;apply(result.state);lastSnapshot=snapshot();lastCloudStamp=result.updatedAt;sessionStorage.removeItem('cf_sync_reload:'+location.pathname);location.reload();return;}lastCloudStamp=result.updatedAt||lastCloudStamp;if(stable(current)!==stable(lastSnapshot))schedule();}catch(e){if(!String(e.message).includes('session expired'))notice('Cloud sync check failed: '+e.message,true)}}
-  async function start(){notice('Connecting to Cloudflare sync…');const result=await request('/api/sync');if(result.state){apply(result.state);lastCloudStamp=result.updatedAt||null;lastSnapshot=snapshot();const marker='cf_sync_reload:'+location.pathname;if(sessionStorage.getItem(marker)!=='1'){sessionStorage.setItem(marker,'1');location.reload();return;}sessionStorage.removeItem(marker);}else lastSnapshot=null;ready=true;if(!result.state)await push();notice('Cloud sync connected. Changes save automatically.');setInterval(poll,3000);}
-  start().catch(e=>notice('Cloud sync unavailable: '+e.message,true));
+
+  const stable = value => JSON.stringify(value, (key, item) =>
+    item && typeof item === 'object' && !Array.isArray(item)
+      ? Object.keys(item).sort().reduce((out, name) => (out[name] = item[name], out), {})
+      : item
+  );
+
+  function snapshot() {
+    const state = {};
+    for (const key of KEYS) {
+      const raw = localStorage.getItem(key);
+      if (raw === null) state[key] = null;
+      else {
+        try { state[key] = JSON.parse(raw); }
+        catch { state[key] = raw; }
+      }
+    }
+    return state;
+  }
+
+  function apply(state) {
+    for (const key of KEYS) {
+      if (!Object.prototype.hasOwnProperty.call(state || {}, key)) continue;
+      if (state[key] === null) localStorage.removeItem(key);
+      else localStorage.setItem(key, typeof state[key] === 'string' ? state[key] : JSON.stringify(state[key]));
+    }
+  }
+
+  async function request(url, options = {}) {
+    const response = await fetch(url, {
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { 'content-type': 'application/json', ...(options.headers || {}) },
+      ...options
+    });
+    let data = {};
+    try { data = await response.json(); } catch {}
+    if (response.status === 401) {
+      location.replace('/login.html?next=' + encodeURIComponent(location.pathname + location.search));
+      throw new Error('Your session expired. Please sign in again.');
+    }
+    if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+    return data;
+  }
+
+  let ready = false;
+  let busy = false;
+  let pushTimer = null;
+  let pollTimer = null;
+  let lastSnapshot = null;
+  let lastCloudState = null;
+
+  function schedulePush() {
+    if (!ready) return;
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(push, 500);
+  }
+
+  const originalSet = localStorage.setItem.bind(localStorage);
+  const originalRemove = localStorage.removeItem.bind(localStorage);
+  localStorage.setItem = function (key, value) {
+    originalSet(key, value);
+    if (KEYS.includes(String(key))) schedulePush();
+  };
+  localStorage.removeItem = function (key) {
+    originalRemove(key);
+    if (KEYS.includes(String(key))) schedulePush();
+  };
+
+  async function push() {
+    if (!ready || busy) return;
+    const local = snapshot();
+    if (stable(local) === stable(lastSnapshot)) return;
+    busy = true;
+    try {
+      await request('/api/sync', {
+        method: 'PUT',
+        body: JSON.stringify({ state: local })
+      });
+      lastSnapshot = local;
+      lastCloudState = local;
+      notice('Cloud sync saved. Other devices can now receive these records.');
+    } catch (error) {
+      notice('Cloud sync error: ' + error.message, true);
+    } finally {
+      busy = false;
+      if (stable(snapshot()) !== stable(lastSnapshot)) schedulePush();
+    }
+  }
+
+  async function poll() {
+    if (!ready || busy) return;
+    try {
+      const result = await request('/api/sync');
+      if (!result.state) return;
+      const local = snapshot();
+      const localChanged = stable(local) !== stable(lastSnapshot);
+      const cloudChanged = stable(result.state) !== stable(lastCloudState);
+
+      // Compare payloads rather than relying only on updated_at timestamps.
+      if (cloudChanged && !localChanged) {
+        busy = true;
+        try {
+          apply(result.state);
+          lastSnapshot = snapshot();
+          lastCloudState = result.state;
+          notice('New records received from cloud. Refreshing this page…');
+          clearInterval(pollTimer);
+          location.reload();
+          return;
+        } finally {
+          busy = false;
+        }
+      }
+
+      if (localChanged) schedulePush();
+      else lastCloudState = result.state;
+    } catch (error) {
+      if (!String(error.message).includes('session expired')) {
+        notice('Cloud sync check failed: ' + error.message, true);
+      }
+    }
+  }
+
+  async function start() {
+    notice('Connecting to Cloudflare sync…');
+    const result = await request('/api/sync');
+
+    if (result.state) {
+      // Inline page scripts may read browser storage before this deferred script.
+      apply(result.state);
+      lastSnapshot = snapshot();
+      lastCloudState = result.state;
+      const marker = 'cf_sync_reload:' + location.pathname;
+      if (sessionStorage.getItem(marker) !== '1') {
+        sessionStorage.setItem(marker, '1');
+        location.reload();
+        return;
+      }
+      sessionStorage.removeItem(marker);
+    } else {
+      // No cloud row exists yet: seed D1 with this device's existing data.
+      lastSnapshot = null;
+      lastCloudState = null;
+    }
+
+    ready = true;
+    if (!result.state) await push();
+    notice('Cloud sync connected. Changes save automatically.');
+    pollTimer = setInterval(poll, 2000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) poll();
+    });
+    window.addEventListener('focus', poll);
+    window.addEventListener('online', poll);
+  }
+
+  start().catch(error => notice('Cloud sync unavailable: ' + error.message, true));
 })();

@@ -1,28 +1,28 @@
-ZANACO PERSONAL FINANCE APP — LOGOUT FIX
-========================================
+ZANACO PERSONAL FINANCE APP — CROSS-DEVICE SYNC FIX
 
-WHY LOGOUT MAY NOT BE WORKING
-Your repository has a logout.js script and /api/logout endpoint, but the
-dashboard pages may not be loading logout.js. This upload updates the
-Cloudflare Pages middleware to load it automatically on all four dashboard
-pages. It also keeps cloud-sync.js and the login gate enabled.
+Repository: Zaza93-crypto/zanaco-personal-finance-app
+Target file: cloud-sync.js
+
+WHAT I CHECKED
+- functions/api/sync.js already reads/writes the per-user snapshot in Cloudflare D1.
+- functions/_middleware.js injects cloud-sync.js into the existing dashboard pages.
+- The current cloud-sync.js only applies remote changes when updated_at changes, which can leave another device displaying stale records.
+- I attempted to update the repository directly, but GitHub returned 403: Resource not accessible by integration. No GitHub file was changed by that attempt.
 
 UPLOAD
-1. Extract this ZIP.
-2. In GitHub, open Zaza93-crypto/zanaco-personal-finance-app.
-3. Open the functions folder.
-4. Upload the provided _middleware.js and commit it to the same branch
-   Cloudflare Pages deploys.
-5. Wait for the deployment to finish.
-6. Open the website, hard refresh/reload, and check for the Log out button.
+1. Open the repository on GitHub.
+2. Open cloud-sync.js and choose Edit (pencil icon).
+3. Replace the complete contents with the cloud-sync.js file in this ZIP.
+4. Commit the change to the branch Cloudflare Pages deploys (normally main).
+5. Wait for the Cloudflare Pages deployment to succeed.
+6. On both devices, sign in to the same account and refresh the dashboard.
+
+This keeps the four existing pages and the current Cloudflare Pages + D1 architecture. It does not change database tables or overwrite the HTML pages.
+
+TEST
+1. On Device A, add or change one budget/import record and wait for “Cloud sync saved”.
+2. On Device B, open the same account and wait up to a few seconds; the page should refresh when it receives new cloud records.
+3. If it still fails, report the exact sync notice shown on Device A and Device B.
 
 IMPORTANT
-- If functions/_middleware.js already exists, download a backup first.
-  This file replaces that middleware, so merge existing middleware logic
-  rather than overwriting it if it contains other important logic.
-- The repository should already contain root files logout.js and
-  cloud-sync.js, plus functions/api/logout.js and functions/api/sync.js.
-- This ZIP has not been deployed to GitHub or tested on the live site.
-- If clicking Log out still fails after this deploy, inspect the browser
-  Network tab for POST /api/logout. A 404 suggests the Pages Function route
-  isn't deployed; a 500 suggests a function/runtime issue.
+This ZIP is prepared but not deployed. Sync is not verified until the GitHub edit is committed, Cloudflare finishes deploying, and the two-device test passes.
