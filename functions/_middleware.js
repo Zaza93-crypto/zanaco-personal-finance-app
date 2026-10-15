@@ -1,10 +1,10 @@
-// Cloudflare Pages middleware: shared theme, logout button and cloud sync injection.
+// Cloudflare Pages middleware: inject shared website theme and existing sync/logout scripts.
 const DASHBOARD_PAGES = new Set(["/", "/index.html", "/budget.html", "/investment.html", "/tracker.html"]);
 
 const INJECTED_ASSETS = [
-  '<link rel="stylesheet" href="/unified-theme.css?v=20261015-fix1">',
-  '<script defer src="/logout.js?v=20261015-fix1"></script>',
-  '<script defer src="/cloud-sync.js?v=20261015-fix1"></script>',
+  '<link rel="stylesheet" href="/unified-theme.css?v=20261015-site-redesign">',
+  '<script defer src="/logout.js?v=20261015-site-redesign"></script>',
+  '<script defer src="/cloud-sync.js?v=20261015-site-redesign"></script>',
   `<script>
   (function () {
     fetch('/api/sync', { credentials: 'same-origin', cache: 'no-store' })
@@ -29,7 +29,7 @@ export async function onRequest(context) {
   if (!response.ok || !contentType.includes("text/html")) return response;
 
   let html = await response.text();
-  if (!html.includes('href="/unified-theme.css?v=20261015-fix1"')) {
+  if (!html.includes('href="/unified-theme.css?v=20261015-site-redesign"')) {
     if (/<\/head\s*>/i.test(html)) {
       html = html.replace(/<\/head\s*>/i, INJECTED_ASSETS + "\n</head>");
     } else {

@@ -1,18 +1,22 @@
-ZANACO / ALL MONEY — CLOUDFLARE DEPLOYMENT FIX
+ALL MONEY WEBSITE REDESIGN — FULL SITE THEME
 
-Likely issue:
-The previously uploaded functions/_middleware.js had incorrectly escaped the HTML head-tag regular expression. This replacement corrects the expression and newline separators.
+This package changes the visual presentation of the website pages to match the supplied mobile finance reference:
+- coral / pink / purple gradient accents
+- warm white background and rounded cards
+- consistent buttons, forms, tables and navigation
+- responsive layouts for phone and desktop
+- existing logout and cloud-sync scripts injected by middleware
 
-UPLOAD ONLY THIS FILE:
-functions/_middleware.js
+FILES
+- unified-theme.css (upload to repository root)
+- functions/_middleware.js (replace the existing file)
+- README.txt
 
-Steps:
-1. Extract the ZIP.
-2. In GitHub, open the functions folder, then _middleware.js.
-3. Replace its full contents with the included file.
-4. Commit the change to the branch connected to Cloudflare Pages.
-5. Open Cloudflare Pages and check the newest deployment.
+UPLOAD
+1. Extract this ZIP.
+2. Upload unified-theme.css to the repository root.
+3. Replace functions/_middleware.js with the included file.
+4. Keep index.html, budget.html, investment.html, tracker.html, login.html, API functions, migrations, cloud-sync.js, logout.js and wrangler.toml unchanged.
+5. Commit the changes to the branch connected to Cloudflare Pages and wait for deployment.
 
-Keep unified-theme.css in the repository root and keep index.html, budget.html, investment.html, tracker.html, login.html, cloud-sync.js, logout.js, API functions, migrations, and wrangler.toml unchanged.
-
-This package has not been deployed. If the next deployment still fails, open its Details and copy the first error line so the remaining cause can be identified.
+The middleware injects the stylesheet and existing scripts into the four dashboard pages. It corrects the head-tag regex and uses valid newline separators. This is a manual-upload package; it has not been deployed or verified live.
