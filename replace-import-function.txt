@@ -1,0 +1,90 @@
+async function importStatement(){
+  const file=$('statementFile').files[0];
+  if(!file){$('importResult').textContent='Choose a statement file first.';return}
+  let provider=$('providerName').value.trim()||'Unknown account';
+  try{
+    const ext=file.name.split('.').pop().toLowerCase();
+    let rows=[],detectedCurrency='',detectedAccount='',detectedBank='';
+    if(['xlsx','xls'].includes(ext)){
+      if(!window.XLSX){$('importResult').textContent='Excel support is still loading. Press Import transactions again in a moment.';return}
+      const workbook=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});
+      rows=XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]],{header:1,raw:false,defval:''});
+      for(const row of rows.slice(0,50)){
+        const joined=row.map(v=>String(v??'')).join(' | ');
+        let m=joined.match(/Account\s+Currency\s*:?\s*\|?\s*([A-Z]{3})/i);
+        if(m)detectedCurrency=m[1].toUpperCase();
+        m=joined.match(/Account\s+Name\s*:?\s*\|?\s*([^|]+)/i);
+        if(m)detectedAccount=m[1].trim();
+      }
+      if(/zanaco/i.test(file.name))detectedBank='Zanaco';
+    }else if(['csv','txt'].includes(ext)){
+      rows=parseCSV(await file.text());
+    }else if(ext==='json'){
+      const parsed=JSON.parse(await file.text());
+      rows=Array.isArray(parsed)&&parsed.length&&typeof parsed[0]==='object'&&!Array.isArray(parsed[0])
+        ?[Object.keys(parsed[0]),...parsed.map(o=>Object.values(o))]:parsed;
+    }else{
+      $('importResult').textContent='Unsupported file type. Supported: CSV, TXT, XLS, XLSX and JSON. Scanned/password-protected PDFs need conversion or OCR.';
+      return;
+    }
+    if(!Array.isArray(rows)||!rows.length){$('importResult').textContent='No readable rows found.';return}
+    // Locate a transaction header even when the workbook starts with account metadata and blank rows.
+    let headerIndex=-1,h=[];
+    const headerScore=row=>{
+      const a=(row||[]).map(v=>head(v));
+      return (a.some(v=>['date','txndate','transactiondate','valuedate','postingdate','timestamp'].includes(v))?1:0)
+        +(a.some(v=>['description','details','narration','transaction','transactiondetails','particular','remarks','reference'].includes(v))?1:0)
+        +(a.some(v=>['amount','transactionamount','value','debit','credit','withdrawal','deposit','moneyout','moneyin','paidout','paidin'].includes(v))?1:0);
+    };
+    for(let i=0;i<Math.min(rows.length,80);i++){
+      if(headerScore(rows[i])===3){headerIndex=i;h=rows[i].map(String);break}
+    }
+    if(headerIndex<0){$('importResult').textContent='File detected, but no transaction table was recognized. No records were added.';return}
+    const normalized=h.map(head);
+    const find=terms=>normalized.findIndex(v=>terms.some(t=>v===t||v.includes(t)));
+    const di=find(['txndate','transactiondate','date','valuedate','postingdate','timestamp']);
+    const de=find(['transactiondetails','description','narration','details','particular','remarks','transaction']);
+    const ai=find(['transactionamount','amount','value']);
+    const db=find(['debit','withdrawal','moneyout','paidout']);
+    const cr=find(['credit','deposit','moneyin','paidin']);
+    const bi=find(['runningbalance','balance','closingbalance']);
+    const ci=find(['category','transactiontype','drcr','type']);
+    if(di<0||de<0||(ai<0&&db<0&&cr<0)){
+      $('importResult').textContent='Transaction table found, but date/description/amount columns could not be mapped. No records were added.';return;
+    }
+    if((!$('providerName').value.trim()||$('providerName').value.trim()==='New account')&&(detectedBank||detectedAccount)){
+      provider=[detectedBank,detectedAccount].filter(Boolean).join(' — ');
+      $('providerName').value=provider;
+    }
+    const got=[];let skipped=0;
+    for(let i=headerIndex+1;i<rows.length;i++){
+      const row=rows[i]||[];
+      if(row.every(v=>String(v??'').trim()===''))continue;
+      const description=String(row[de]??'').trim();
+      if(/^(---\s*)?(opening|closing)\s+balance/i.test(description)||/^total\s+(debit|credit|entries)/i.test(description)||/^summary$/i.test(description))continue;
+      const iso=pdate(row[di]);let type='debit',amount=NaN;
+      if(db>=0||cr>=0){
+        const debit=db>=0?num(row[db]):NaN,credit=cr>=0?num(row[cr]):NaN;
+        if(Number.isFinite(credit)&&credit!==0){amount=Math.abs(credit);type='credit'}
+        else if(Number.isFinite(debit)&&debit!==0){amount=Math.abs(debit);type='debit'}
+        else if(ai>=0){const n=num(row[ai]);if(Number.isFinite(n)){amount=Math.abs(n);type=n<0?'debit':'credit'}}
+      }else if(ai>=0){
+        const raw=String(row[ai]??''),n=num(raw);amount=Math.abs(n);
+        if(n<0||/debit|withdraw|payment|sent|paid out/i.test(String(ci>=0?row[ci]:'')))type='debit';
+        else if(/credit|deposit|received|salary|refund|interest received/i.test(String(ci>=0?row[ci]:''))||/credit|deposit|received|salary|refund|interest received/i.test(description)||/^\s*\+/.test(raw))type='credit';
+      }
+      if(!iso||!description||!Number.isFinite(amount)||amount===0){skipped++;continue}
+      const category=ci>=0&&!/^[dc]$/i.test(String(row[ci]??'').trim())&&String(row[ci]??'').trim()
+        ?String(row[ci]).trim():categoryFor(description,type);
+      got.push({date:iso,iso,description,provider,type,amount,balance:bi>=0?String(row[bi]??'').trim():'',category,currency:detectedCurrency||'ZMW',imported:true});
+    }
+    if(!got.length){$('importResult').textContent='Statement table identified, but no valid transactions were found. No records were added.';return}
+    const keyOf=t=>[t.iso,t.description,t.type,Number(t.amount).toFixed(2),t.provider||''].join('|');
+    const existing=new Set(data.map(keyOf));
+    const newRows=got.filter(t=>!existing.has(keyOf(t)));
+    importedData=importedData.concat(newRows);data=data.concat(newRows);saveLocal();
+    $('importResult').textContent='Statement identified: '+(detectedBank||'bank/account statement')+'; '+(detectedAccount?'account '+detectedAccount+'; ':'')+'currency '+(detectedCurrency||'not stated')+'. '+newRows.length+' transactions imported; '+(got.length-newRows.length)+' possible duplicates skipped; '+skipped+' heading, summary or invalid rows ignored. Verify currency and totals against the original statement.';
+    $('statusNotice').innerHTML='<b>Statement detected.</b> Transaction headings were located automatically, including statements with account details above the table. Verify currency and totals against the original statement.';
+    render();renderBudgets();
+  }catch(error){$('importResult').textContent='Import failed: '+(error.message||'unknown file error')+'. No records were claimed as imported.'}
+}
