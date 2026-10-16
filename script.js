@@ -117,6 +117,96 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Save Budget and Investment entries after editing or deleting.
+  const financePage = document.body.dataset.page;
+  const financeStorageKey = financePage === 'budget'
+    ? 'zanaco-budget-v1'
+    : 'zanaco-investments-v1';
+
+  function saveFinanceEntries() {
+    try {
+      if (financePage === 'budget') {
+        const panel = document.querySelector('.budget-grid>.panel');
+        if (!panel) return;
+
+        localStorage.setItem(financeStorageKey, JSON.stringify({
+          rows: [...panel.querySelectorAll('.budget-item')]
+            .map(row => row.outerHTML),
+          total: document.querySelector('#totalBudget')?.textContent || ''
+        }));
+      }
+
+      if (financePage === 'investment') {
+        const tbody = document.querySelector('#holdingsTable tbody');
+        if (!tbody) return;
+
+        localStorage.setItem(financeStorageKey, JSON.stringify({
+          rows: [...tbody.querySelectorAll('tr')]
+            .map(row => row.outerHTML)
+        }));
+      }
+    } catch (error) {
+      console.error('Could not save finance entries:', error);
+      alert('Unable to save changes on this device.');
+    }
+  }
+
+  // Restore saved entries when the page is reopened.
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(financeStorageKey) || 'null'
+    );
+
+    if (saved && Array.isArray(saved.rows)) {
+      if (financePage === 'budget') {
+        const panel = document.querySelector('.budget-grid>.panel');
+
+        if (panel) {
+          panel.querySelectorAll('.budget-item')
+            .forEach(row => row.remove());
+
+          saved.rows.forEach(html =>
+            panel.insertAdjacentHTML('beforeend', html)
+          );
+        }
+
+        const total = document.querySelector('#totalBudget');
+        if (total && saved.total) total.textContent = saved.total;
+      }
+
+      if (financePage === 'investment') {
+        const tbody = document.querySelector('#holdingsTable tbody');
+
+        if (tbody) {
+          tbody.innerHTML = '';
+          saved.rows.forEach(html =>
+            tbody.insertAdjacentHTML('beforeend', html)
+          );
+
+          const count = document.querySelector('#assetCount');
+          if (count) count.textContent = saved.rows.length;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Could not restore finance entries:', error);
+  }
+
+  // Run after the existing edit/delete click handler.
+  document.addEventListener('click', event => {
+    if (event.target.closest('.entry-edit, .entry-delete')) {
+      queueMicrotask(saveFinanceEntries);
+    }
+  });
+
+  // Save newly created entries too.
+  ['budgetForm', 'investmentForm'].forEach(id => {
+    document.querySelector('#' + id)?.addEventListener(
+      'submit',
+      () => queueMicrotask(saveFinanceEntries)
+    );
+  });
+
   let month=9;const label=$('#monthLabel');function renderMonth(){if(label)label.textContent=new Date(2026,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});}
   $('#prevMonth')?.addEventListener('click',()=>{month=(month+11)%12;renderMonth()});$('#nextMonth')?.addEventListener('click',()=>{month=(month+1)%12;renderMonth()});
 });
