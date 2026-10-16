@@ -1,46 +1,30 @@
-ALL MONEY — FULL WEBSITE REDESIGN (shared theme)
+ZANACO PERSONAL FINANCE — VISUAL REDESIGN PACKAGE
 
-This package applies one consistent visual design across:
-- index.html (overview)
-- tracker.html
-- budget.html
-- investment.html
+Design direction follows the supplied mockup: soft lavender canvas, crisp white cards,
+navy financial text, purple gradient primary buttons, colour-coded finance indicators,
+clean tables, consistent navigation and responsive mobile scrolling.
 
-Design direction:
-- Lavender / warm-white canvas with subtle coral and purple glow
-- Purple-to-coral brand treatment and a polished overview hero
-- Rounded white cards, soft shadows, consistent buttons and forms
-- More legible metrics and tables
-- Responsive navigation and mobile-friendly table scrolling
-- Green positive values and red negative values, not color alone for controls
+Included:
+- zanaco-redesign.css — shared styling for index, tracker, budget and investment pages
+- apply-redesign.ps1 — adds the stylesheet link to each existing page and creates backups
+- README.txt — installation steps
 
-IMPORTANT
-This is a presentation-only patch. It does not rewrite financial calculations, statement imports,
-PDF/Excel parsing, login, Cloudflare Functions, D1, or cross-device sync.
-
-INSTALL ON WINDOWS
-1. Download the latest repository ZIP from:
+INSTALL:
+1. Download the latest repository ZIP from
    https://github.com/Zaza93-crypto/zanaco-personal-finance-app
-2. Extract the repository ZIP.
-3. Copy all-money-theme.css and apply-theme.ps1 from this package into the repository root
-   (the same folder as index.html, tracker.html, budget.html and investment.html).
+2. Extract the repository into a folder.
+3. Copy zanaco-redesign.css and apply-redesign.ps1 into the same folder as the four HTML pages.
 4. Open PowerShell in that folder and run:
-   powershell -ExecutionPolicy Bypass -File .\apply-theme.ps1
-5. Inspect the four updated HTML files and the *.before-full-redesign.bak backups.
-6. Commit and push the changed files to the main branch. Wait for Cloudflare Pages to deploy.
-7. Hard-refresh the site (Ctrl+F5) or open it in a private window.
+   powershell -ExecutionPolicy Bypass -File .\apply-redesign.ps1
+5. Review all four HTML files and the generated .before-visual-redesign.bak backups.
+6. Commit and push changes to the main branch. Wait for Cloudflare Pages to deploy.
+7. Hard refresh the live website (Ctrl+F5).
 
-If PowerShell blocks scripts, use:
-   Set-ExecutionPolicy -Scope Process Bypass
-   .\apply-theme.ps1
+Wrangler note: current wrangler.toml uses pages_build_output_dir = ".". Keep the stylesheet
+in the repository root alongside the HTML pages; no wrangler.toml change is needed.
 
-This ZIP does NOT contain full replacement copies of the site's HTML/JavaScript. It adds one shared
-stylesheet and links it to the existing pages to avoid overwriting working business logic.
-No changes have been deployed by this package alone.
-
-
-VISUAL PREVIEW
-The included design-preview-mockup.png is an illustrative concept mockup, not a screenshot of the live website.
-
-IMPORTANT DEPLOYMENT NOTE
-Uploading this ZIP to Cloudflare Pages alone will not modify a Git-connected deployment. Extract the files into the root of the GitHub repository, run the installer on Windows, review and commit the four HTML changes, then push to GitHub.
+IMPORTANT LIMITATION:
+This package changes presentation only. It does not replace the four HTML pages, add new chart
+functionality, or rewrite application logic. Existing logic is preserved because the existing
+HTML and scripts are left in place. GitHub direct writes were rejected by the connected integration,
+so this package has not been deployed to the live site.
