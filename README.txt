@@ -37,3 +37,10 @@ If PowerShell blocks scripts, use:
 This ZIP does NOT contain full replacement copies of the site's HTML/JavaScript. It adds one shared
 stylesheet and links it to the existing pages to avoid overwriting working business logic.
 No changes have been deployed by this package alone.
+
+
+VISUAL PREVIEW
+The included design-preview-mockup.png is an illustrative concept mockup, not a screenshot of the live website.
+
+IMPORTANT DEPLOYMENT NOTE
+Uploading this ZIP to Cloudflare Pages alone will not modify a Git-connected deployment. Extract the files into the root of the GitHub repository, run the installer on Windows, review and commit the four HTML changes, then push to GitHub.
