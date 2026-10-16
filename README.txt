@@ -1,12 +1,15 @@
-ALL MONEY — MONTHLY FINANCIAL REPORTS
+ALL MONEY — INDEX STYLE PATCH
 
-Included: index.html only.
+Purpose:
+Make index.html (Overview) use the dark navy, green, blue and slate card styling already used by tracker.html and budget.html, while keeping the Overview's own dashboard content.
 
-Install:
-1. Download and extract the ZIP.
-2. Replace index.html in the root of the existing GitHub repository with this file.
-3. Commit the change to the deployment branch and wait for Cloudflare Pages to deploy.
-4. Open Overview and use “Monthly financial health report”.
-5. Select a month, update the report, and use “Print / Save report as PDF”.
+Apply:
+1. Open index.html in the GitHub repository.
+2. Find the closing </style> tag near the top of the file.
+3. Open index-style-override.css from this ZIP and copy its entire contents.
+4. Paste the CSS immediately BEFORE </style> (do not replace the existing CSS).
+5. Commit the change and wait for Cloudflare Pages to deploy.
+6. Refresh the live site with Ctrl+F5 and check desktop and mobile.
 
-The report uses the existing transaction and budget arrays already used by the overview. It does not create a new database or claim that local browser storage syncs across devices. Figures are limited to recorded rows; review imports and classifications. Print output is limited to the report panel.
+Important:
+This is a CSS patch, not a replacement index.html. It does not change JavaScript, stored financial data, imports, or database logic. The GitHub integration denied a direct write, so this ZIP has not been deployed automatically.
