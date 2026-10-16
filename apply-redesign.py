@@ -1,24 +1,31 @@
-#!/usr/bin/env python3
-"""Patch current repository pages in place, with backups. Does not touch JS business logic."""
 from pathlib import Path
-import re,sys
-root=Path(__file__).resolve().parent
-pages=["index.html","tracker.html","budget.html","investment.html"]
-for page in pages:
-    if not (root/page).is_file():
-        sys.exit(f"Missing {page}. Put all package files beside your existing four HTML pages.")
-if not (root/"all-money-redesign.css").is_file() or not (root/"all-money-redesign.js").is_file():
-    sys.exit("Missing design assets.")
-for page in pages:
-    p=root/page
-    text=p.read_text(encoding="utf-8-sig")
-    backup=p.with_name(page+".before-redesign.bak")
-    if not backup.exists():backup.write_text(text,encoding="utf-8")
-    text=re.sub(r'\s*<link[^>]+all-money-redesign\.css[^>]*>',"",text,flags=re.I)
-    text=re.sub(r'\s*<script[^>]+all-money-redesign\.js[^>]*>\s*</script>',"",text,flags=re.I)
-    if not re.search(r'</head\s*>',text,re.I):sys.exit(f"{page} has no </head>.")
-    links='\n<link rel="stylesheet" href="all-money-redesign.css?v=20261016">\n<script defer src="all-money-redesign.js?v=20261016"></script>\n'
-    text=re.sub(r'</head\s*>',links+'</head>',text,count=1,flags=re.I)
-    p.write_text(text,encoding="utf-8")
-    print("Updated",page)
-print("Done. Upload four modified HTML files AND both all-money-redesign assets.")
+import re
+
+FILES = ["index.html", "tracker.html", "budget.html", "investment.html"]
+STYLE = '<link rel="stylesheet" href="/all-money-redesign.css?v=20261016">'
+SCRIPT = '<script src="/all-money-redesign.js?v=20261016"></script>'
+
+root = Path(__file__).resolve().parent
+changed = []
+for name in FILES:
+    path = root / name
+    if not path.exists():
+        print(f"SKIP: {name} not found in this folder")
+        continue
+    html = path.read_text(encoding="utf-8")
+    if "all-money-redesign.css" not in html:
+        if re.search(r"</head>", html, flags=re.I):
+            html = re.sub(r"</head>", STYLE + "\n</head>", html, count=1, flags=re.I)
+        else:
+            print(f"SKIP: {name} has no closing </head>")
+            continue
+    if "all-money-redesign.js" not in html:
+        if re.search(r"</body>", html, flags=re.I):
+            html = re.sub(r"</body>", SCRIPT + "\n</body>", html, count=1, flags=re.I)
+        else:
+            print(f"SKIP: {name} has no closing </body>")
+            continue
+    path.write_text(html, encoding="utf-8")
+    changed.append(name)
+print("\nUpdated:", ", ".join(changed) if changed else "no files")
+print("The redesign CSS/JS files must remain in the repository root.")
