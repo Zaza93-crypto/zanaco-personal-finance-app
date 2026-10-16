@@ -1,4 +1,3 @@
-
 /* ALL MONEY: screenshot-inspired complete UI shell, preserves original page functionality */
 :root{--am-bg:#f4f5ff;--am-white:#fff;--am-ink:#111b45;--am-muted:#65739b;--am-purple:#6036ff;--am-blue:#4774ff;--am-line:#e5eaf8;--am-shadow:0 12px 35px #263d8310;--am-sidebar:#101b37}
 html{background:var(--am-bg)!important}body{background:radial-gradient(circle at 95% 5%,#e6ddff,transparent 35%),#f4f5ff!important;color:var(--am-ink)!important;font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;margin:0!important;min-height:100vh}

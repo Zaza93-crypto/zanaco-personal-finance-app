@@ -1,4 +1,3 @@
-
 /* UI shell only: never modifies transactions, login state, storage or calculations. */
 (function(){
   function init(){
