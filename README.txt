@@ -1,16 +1,24 @@
-# All Money — redesigned financial dashboard
+# All Money — Profile and Settings patch
 
 ## Included
-- `index.html`: overview with balance/income/expense/investment totals, income-vs-expense bars, category breakdown, quick actions and money-watch alerts.
-- `tracker.html`: transaction entry/edit/delete, date/category/type/currency/reconciliation filters, statement import preview, duplicate warnings and reconciliation checkboxes.
-- `budget.html`: monthly category budgets, spending progress, 75%+ budget alerts, edit/delete and month navigation.
-- `investment.html`: holdings, asset allocation, portfolio value, invested amount, gain/loss, add/edit/delete.
-- `style.css`: shared responsive design matching the supplied reference.
-- `script.js`: client-side dashboard logic and local persistence.
+- `account-tools.js`: profile, settings and security dialogs injected on all four dashboard pages.
+- `functions/api/account.js`: reads and updates the signed-in user's display name and email.
+- `functions/api/change-password.js`: verifies the current password and securely updates the password hash and salt.
+- HTML patches to load the account tools on Overview, Tracker, Budget and Investment pages.
+- Optional sync patches for storing settings preferences in the existing per-user D1 sync state.
 
-## Important deployment notes
-1. Make a backup of your current repository before replacing files.
-2. Upload the four HTML pages, `style.css`, and `script.js` together to the existing Cloudflare Pages project.
-3. USD entries can be recorded, but ZMW summary totals intentionally exclude USD records because no live or user-configured FX conversion rate is included. Set a verified conversion rate and add conversion logic before relying on combined multi-currency totals. The dashboard saves to this browser/device using localStorage. This package does **not** implement or alter your Cloudflare D1/API authentication and cross-device sync. Those require the existing server endpoints to be connected and tested; do not treat local browser storage as cloud sync.
-4. PDF/Excel readers load from public CDNs, so statement import requires an internet connection. PDF parsing only works for text-based PDFs; scanned image PDFs need OCR. Bank statement formats vary, so verify the preview and totals before importing.
-5. The dashboard starts with sample October 2026 records only when no saved dashboard data exists. Replace sample entries with your own records before relying on totals.
+## Apply carefully
+1. Back up/download the current GitHub repository first.
+2. Add `account-tools.js` to the repository root.
+3. Add `functions/api/account.js` and `functions/api/change-password.js`.
+4. Apply the four HTML script-tag changes so `account-tools.js` loads on all dashboard pages.
+5. Add `allmoney_preferences_v1` to both the `KEYS` list in `cloud-sync.js` and the `ALLOWED` set in `functions/api/sync.js` if you want settings to sync. Without these optional edits, preferences remain local to each browser.
+6. Commit and wait for Cloudflare Pages deployment.
+7. Test profile name/email save, password update using the correct current password, and settings persistence after refresh.
+
+## Important
+- Profile and password endpoints require the existing Cloudflare Pages D1 binding `DB`, user table and session authentication already used by login.
+- Settings provide a default currency for new transaction/investment entries, compact table rows and reduced motion. The currency preference does not convert historical amounts. Currency conversion must use an explicit exchange rate and should be added separately.
+- Apply `script.js.patch` to remove the old alert-only click handler; otherwise it will compete with the new profile/settings dialog.
+- Email updates can affect future sign-in, so verify the new email address carefully before saving.
+- GitHub write access was denied during this session; these files are prepared for you to add, not deployed to the live website.

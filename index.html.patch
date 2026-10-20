@@ -1,0 +1,5 @@
+--- a/index.html
++++ b/index.html
+@@
+-<script src="script.js"></script></body></html>
++<script src="script.js"></script><script defer src="account-tools.js?v=20261020"></script></body></html>

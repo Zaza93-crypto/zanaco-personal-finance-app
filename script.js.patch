@@ -1,0 +1,5 @@
+--- a/script.js
++++ b/script.js
+@@
+-$$('[data-profile],[data-settings]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();alert('Profile and account settings need to be connected to your authentication service.')})); 
++// Profile and Settings are handled by account-tools.js, which opens the account dialog.

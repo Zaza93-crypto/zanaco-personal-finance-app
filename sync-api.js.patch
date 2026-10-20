@@ -1,0 +1,6 @@
+--- a/functions/api/sync.js
++++ b/functions/api/sync.js
+@@
+ const ALLOWED = new Set([
++  "allmoney_preferences_v1",
+   "allmoney_imports", "allmoney_budgets", "allmoney_investments_v1",

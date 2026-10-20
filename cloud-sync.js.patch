@@ -1,0 +1,6 @@
+--- a/cloud-sync.js
++++ b/cloud-sync.js
+@@
+   const KEYS = [
++    'allmoney_preferences_v1',
+     'allmoney_imports',
