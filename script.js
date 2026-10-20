@@ -22,7 +22,7 @@ function openDialog(id,item){editId=item?.id||null;const dlg=$('#'+id),form=dlg?
 $$('[data-open]').forEach(b=>b.addEventListener('click',()=>openDialog(({transaction:'transactionDialog',budget:'budgetDialog',investment:'investmentDialog'})[b.dataset.open])));
 $$('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 $('#logout')?.addEventListener('click',e=>{e.preventDefault();if(confirm('Log out of this local dashboard?'))location.href='login.html'});
-$$('[data-profile],[data-settings]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();//profile and settings clicks are handled by account-tools.js.
+[data-settings]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();//profile and settings clicks are handled by account-tools.js.
 
 function totals(){const tx=db.transactions.filter(t=>(t.currency||'ZMW')==='ZMW');const income=tx.filter(t=>t.type==='Income').reduce((a,t)=>a+t.amount,0);const expenses=tx.filter(t=>t.type==='Expense').reduce((a,t)=>a+t.amount,0);const zInv=db.investments.filter(i=>(i.currency||'ZMW')==='ZMW');const invest=zInv.reduce((a,i)=>a+i.units*i.current,0);const cost=zInv.reduce((a,i)=>a+i.units*i.buy,0);return{income,expenses,balance:income-expenses,invest,cost,gain:invest-cost}}
 function renderOverview(){const t=totals();[['#balance',money(t.balance)],['#incomeTotal',money(t.income)],['#expenseTotal',money(t.expenses)],['#investmentTotal',money(t.invest)],['#spendingTotal',t.expenses.toLocaleString('en-US',{maximumFractionDigits:0})]].forEach(([s,v])=>{if($(s))$(s).textContent=v});if($('#todayDate'))$('#todayDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'short',year:'numeric'});
