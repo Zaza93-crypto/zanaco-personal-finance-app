@@ -1,1 +1,77 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>All Money — Sign in</title><link rel="stylesheet" href="style.css"></head><body style="display:grid;place-items:center;min-height:100vh;padding:20px"><section class="panel" style="max-width:480px;width:100%"><h1>Sign-in integration required</h1><p>This redesigned dashboard package does not replace your existing authentication service. Return to the dashboard or connect your existing login/API before deployment.</p><a class="primary-button" href="index.html">Return to dashboard</a></section></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#6327ef">
+  <title>All Money — Sign in</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{min-height:100vh;display:grid;place-items:center;padding:22px;background:var(--bg,#f4f5fb)}
+    .auth-card{width:min(440px,100%);padding:28px;border-radius:20px}
+    .auth-card h1{margin:0 0 8px}.auth-card p{line-height:1.55}
+    .auth-card label{display:grid;gap:7px;margin:16px 0}
+    .auth-card input{width:100%;box-sizing:border-box;padding:13px;border:1px solid var(--line,#ddd);border-radius:10px}
+    .auth-card button{width:100%;margin-top:10px}
+    .auth-message{min-height:22px;font-size:14px;overflow-wrap:anywhere}
+    .auth-message.error{color:#b42336}.auth-message.success{color:#167345}
+    .auth-links{margin-top:18px;text-align:center;font-size:14px}
+  </style>
+</head>
+<body>
+  <main class="panel auth-card">
+    <h1>Welcome back</h1>
+    <p>Sign in to your All Money dashboard.</p>
+    <form id="loginForm">
+      <label>Email address
+        <input name="email" type="email" autocomplete="username" required maxlength="254" placeholder="you@example.com">
+      </label>
+      <label>Password
+        <input name="password" type="password" autocomplete="current-password" required maxlength="128" placeholder="Enter your password">
+      </label>
+      <p id="loginMessage" class="auth-message" role="status" aria-live="polite"></p>
+      <button class="primary-button" id="loginButton" type="submit">Sign in</button>
+    </form>
+    <div class="auth-links"><a href="index.html">Return to dashboard</a></div>
+  </main>
+  <script>
+    (() => {
+      const form = document.getElementById('loginForm');
+      const message = document.getElementById('loginMessage');
+      const button = document.getElementById('loginButton');
+      const params = new URLSearchParams(location.search);
+      const next = params.get('next');
+      const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : '/index.html';
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        message.className = 'auth-message';
+        message.textContent = 'Signing in…';
+        button.disabled = true;
+        try {
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            credentials: 'same-origin',
+            cache: 'no-store',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify({
+              email: form.elements.email.value.trim(),
+              password: form.elements.password.value
+            })
+          });
+          let data = {};
+          try { data = await response.json(); } catch (_) {}
+          if (!response.ok) throw new Error(data.error || 'Sign-in failed. Please try again.');
+          message.className = 'auth-message success';
+          message.textContent = 'Signed in successfully. Redirecting…';
+          location.replace(safeNext);
+        } catch (error) {
+          message.className = 'auth-message error';
+          message.textContent = error.message || 'Unable to sign in. Check your connection and try again.';
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
