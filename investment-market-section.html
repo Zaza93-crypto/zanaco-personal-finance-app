@@ -1,0 +1,34 @@
+<!-- Insert this section inside investment.html, above the investment dialog or closing </main>. -->
+<section class="panel" id="marketPricesPanel" style="margin-bottom:22px">
+  <div class="panel-title">
+    <div><h2>Automatic Market Prices</h2><p class="muted">Bitcoin refreshes every 5 minutes; LuSE uses official daily data.</p></div>
+    <button type="button" class="secondary" id="refreshMarketPrices">Refresh view</button>
+  </div>
+  <div id="marketStatus" class="muted" role="status">Loading market data…</div>
+  <div style="overflow-x:auto">
+    <table class="data-table" id="marketPricesTable">
+      <thead><tr><th>Market</th><th>Symbol</th><th>Price</th><th>24h change</th><th>Source / fetched</th><th>Status</th></tr></thead>
+      <tbody><tr><td colspan="6">Loading…</td></tr></tbody>
+    </table>
+  </div>
+  <p class="muted">JSE feed unavailable: a verified, permitted source has not been configured. No JSE prices are fabricated.</p>
+</section>
+<script>
+(function(){
+ const body=document.querySelector('#marketPricesTable tbody'), status=document.getElementById('marketStatus');
+ if(!body||!status)return;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const fmt=(n,c)=>Number.isFinite(Number(n))?new Intl.NumberFormat('en-US',{style:'currency',currency:c==='ZMW'?'ZMW':c==='USD'?'USD':'ZAR',maximumFractionDigits:4}).format(Number(n)):'—';
+ async function load(){
+  status.textContent='Checking saved market prices…';
+  try{
+   const r=await fetch('/api/market-prices',{cache:'no-store'}), d=await r.json();
+   if(!r.ok)throw new Error(d.error||'Market API unavailable');
+   body.innerHTML=d.prices.length?d.prices.map(p=>'<tr><td>'+esc(p.market==='LUSE'?'LuSE':p.market==='CRYPTO'?'Bitcoin':'JSE')+'</td><td>'+esc(p.symbol)+'</td><td>'+esc(fmt(p.price,p.currency))+'</td><td>'+(p.change_percent==null?'—':esc(Number(p.change_percent).toFixed(2)+'%'))+'</td><td>'+esc(p.source)+'<br><small>'+esc(p.fetched_at||'')+'</small></td><td>'+(p.stale?'<strong>STALE</strong>':'Available')+'</td></tr>').join(''):'<tr><td colspan="6">No prices saved yet. Run the scheduled refresh after setup.</td></tr>';
+   status.textContent='Last checked '+new Date(d.generated_at).toLocaleString()+' · stale data is flagged.';
+  }catch(e){status.textContent='Market feed not active yet: '+e.message;body.innerHTML='<tr><td colspan="6">No verified current data available.</td></tr>';}
+ }
+ document.getElementById('refreshMarketPrices').addEventListener('click',load);
+ load(); setInterval(load,300000);
+})();
+</script>
