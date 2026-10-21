@@ -1,6 +1,8 @@
 /* Cloudflare D1 sync for All Money. Shared state lives in D1; localStorage is a page cache. */
 (() => {
-  const KEYS = [
+    const MAIN_KEY ='all-money-dashboard-v2';
+  const KEYS =[
+    MAIN_KEY,
     'allmoney_imports',
     'allmoney_budgets',
     'allmoney_investments_v1',
@@ -44,6 +46,8 @@
   function apply(state) {
     for (const key of KEYS) {
       if (!Object.prototype.hasOwnProperty.call(state || {}, key)) continue;
+      if (key===MAIN_KEY && state [key] ===null &&
+          localStorage.getItem(MAIN_KEY) !==null) continue;
       if (state[key] === null) localStorage.removeItem(key);
       else localStorage.setItem(key, typeof state[key] === 'string' ? state[key] : JSON.stringify(state[key]));
     }
@@ -150,11 +154,18 @@
   async function start() {
     notice('Connecting to Cloudflare sync…');
     const result = await request('/api/sync');
+    let needsLegacyMigration= false;
 
     if (result.state) {
+      const localMain = localStorage.getItem(MAIN_KEY);
+      const cloudHasMain =
+        Object.prototype.hasOwnProperty.call(result.state, MAIN_KEY)
+      &&
+        result.state[MAIN_KEY]!==null;
+      needsLegacyMigration =!cloudHasMain && localMain !== null;
       // Inline page scripts may read browser storage before this deferred script.
       apply(result.state);
-      lastSnapshot = snapshot();
+      lastSnapshot = needsLegacyMigration ? null : snapshot();
       lastCloudState = result.state;
       const marker = 'cf_sync_reload:' + location.pathname;
       if (sessionStorage.getItem(marker) !== '1') {
@@ -170,7 +181,7 @@
     }
 
     ready = true;
-    if (!result.state) await push();
+    if (!result.state || needsLegacyMigration) await push();
     notice('Cloud sync connected. Changes save automatically.');
     pollTimer = setInterval(poll, 2000);
     document.addEventListener('visibilitychange', () => {
