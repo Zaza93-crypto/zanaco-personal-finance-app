@@ -1,5 +1,6 @@
 import { json, getSessionUser } from "../_lib/auth.js";
 const ALLOWED = new Set([
+  "all-money-dashboard-v2",
   "allmoney_imports", "allmoney_budgets", "allmoney_investments_v1",
   "allmoney_investment_fx", "allmoney_investment_target_v1"
 ]);
