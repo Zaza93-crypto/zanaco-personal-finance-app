@@ -12,6 +12,68 @@
 @media(max-width:1050px){.sidebar{width:190px}.main{padding:0 18px 25px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid,.budget-grid,.tracker-tools{grid-template-columns:1fr}.donut-wrap{justify-content:flex-start;gap:35px}.quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.app{display:block}.sidebar{width:100%;min-height:0;padding:13px 12px;gap:10px}.brand{padding:0 5px 5px}.sidebar nav{display:flex;overflow-x:auto;gap:5px;margin:0}.sidebar nav a{white-space:nowrap;padding:10px 9px}.sidebar nav a span{display:inline}.nav-label,.sidebar-foot,.sidebar nav.account{display:none}.main{padding:0 12px 22px}.topbar{height:55px}.search{width:60%;padding:0 10px}.welcome{display:none}.page-heading{align-items:flex-start;flex-wrap:wrap;margin:15px 0}.page-heading h1{font-size:21px}.stats{gap:9px}.stat{padding:13px}.stat strong{font-size:16px}.stat-top{font-size:10px}.stat-icon{width:27px;height:27px}.date{display:none}.panel{padding:14px}.donut-wrap{gap:15px;justify-content:space-between}.donut{width:120px;height:120px}.donut:before{width:76px;height:76px}.donut strong{font-size:12px}.legend-list{min-width:100px}.quick-actions{gap:8px}.quick-actions .primary-button{padding:12px 8px;font-size:10px}.month-control{flex-wrap:wrap}.filter-row{gap:7px}.import-card{padding:14px;grid-template-columns:30px 1fr}.table-panel{padding:12px}.budget-grid>.panel{padding:15px}.user{gap:6px}.stats .stat-top{min-height:28px}.dialog-grid{grid-template-columns:1fr}}
 /* Premium 3D dashboard effects */
+.stat,
+.stat-card,
+.panel,
+.chart-card,
+.quick-actions button {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.stat,
+.stat-card,
+.panel,
+.chart-card {
+  animation: zanacoRiseIn 0.7s ease both;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stat:hover,
+  .stat-card:hover {
+    transform: perspective(900px)
+      translateY(-8px) rotateX(4deg) rotateY(-3deg);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.22);
+  }
+
+  .panel:hover,
+  .chart-card:hover {
+    transform: perspective(1200px) translateY(-4px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16);
+  }
+
+  .quick-actions button:hover {
+    transform: perspective(600px) translateY(-4px)
+      rotateX(5deg) scale(1.02);
+  }
+}
+
+@keyframes zanacoRiseIn {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) translateY(18px)
+      rotateX(3deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1000px) translateY(0)
+      rotateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat,
+  .stat-card,
+  .panel,
+  .chart-card,
+  .quick-actions button {
+    animation: none;
+    transition: none;
+  }
+}
+
 @keyframes finance-enter {
   from {
     opacity: 0;
