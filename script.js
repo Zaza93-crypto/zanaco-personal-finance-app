@@ -18,6 +18,25 @@ db.budgets=[['Food & Groceries',2500],['Transport',1200],['Utilities',800],['Edu
 db.investments=[{id:uid(),asset:'Zanaco',type:'Stock',units:500,buy:7.5,current:8.8,currency:'ZMW'},{id:uid(),asset:'ZCCM-IH',type:'Stock',units:1000,buy:25,current:28.5,currency:'ZMW'},{id:uid(),asset:'Bitcoin',type:'Crypto',units:.05,buy:600000,current:720000,currency:'ZMW'}];
 localStorage.setItem(KEY,JSON.stringify(db))}}
 seedIfEmpty();
+
+function updateZambiaGreeting() {
+  const heading = document.querySelector('.page-heading h1');
+  if (!heading) return;
+
+  Const hour = Number(
+    new Intl.DateTimeFormat('en-GB',{
+      timeZone:'Africa/Lusaka',
+      hour:'2-digit',
+      hourCycle:'h23'
+    }).format(new Date())
+    );
+  heading.textContent=
+    hour<12?'Good morning':
+    hour<17?'Good afternoon':
+    'Good evening';
+}
+updateZambiaGretting();
+setInterval(updateZambiaGretting, 60000);
 function openDialog(id,item){editId=item?.id||null;const dlg=$('#'+id),form=dlg?.querySelector('form');if(!dlg||!form)return;form.reset();const map={transaction:'transaction',budget:'budget',investment:'investment'}[id.replace('Dialog','')];const title=$(('#'+id+'Title'));if(title)title.textContent=(item?'Edit ':'Add ')+(map==='transaction'?'Transaction':map==='budget'?'Budget':'Investment');if(item)Object.entries(item).forEach(([k,v])=>{const el=form.elements[k];if(el)el.value=v});if(id==='transactionDialog'&&!item)form.elements.date.value=today();if(id==='budgetDialog'&&!item)form.elements.month.value=new Date().toISOString().slice(0,7);dlg.showModal()}
 $$('[data-open]').forEach(b=>b.addEventListener('click',()=>openDialog(({transaction:'transactionDialog',budget:'budgetDialog',investment:'investmentDialog'})[b.dataset.open])));
 $$('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
